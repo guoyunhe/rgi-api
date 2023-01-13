@@ -1,9 +1,18 @@
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm';
+import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm';
 import { DateTime } from 'luxon';
+import GameSeries from './GameSeries';
 
-export default class GameSeries extends BaseModel {
+export default class GameTitle extends BaseModel {
   @column({ isPrimary: true })
   public id: number;
+
+  /** Game series ID that the title belongs to */
+  @column()
+  public gameSeriesId: number;
+
+  /** Game series that the title belongs to */
+  @belongsTo(() => GameSeries)
+  public gameSeries: BelongsTo<typeof GameSeries>;
 
   /** Name in English */
   @column()
