@@ -22,6 +22,10 @@ export default class GameRom extends BaseModel {
   @column()
   public serial: number | null;
 
+  /** Size in byte */
+  @column()
+  public size: number | null;
+
   /** MD5 checksum */
   @column()
   public md5: string | null;

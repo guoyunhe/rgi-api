@@ -19,6 +19,7 @@ export default class extends BaseSchema {
 
       table.string('serial').nullable();
 
+      table.integer('size').nullable();
       table.string('md5', 32).nullable();
       table.string('sha1', 40).nullable();
 
