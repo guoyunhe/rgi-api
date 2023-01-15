@@ -88,6 +88,27 @@ node ace build --production
 sudo systemctl restart pm2-root
 ```
 
+## Internationalization
+
+- Aribic (ar)
+- Chinese (zh)
+- Dutch (nl)
+- English (en)
+- Finnish (fi)
+- French (fr)
+- German (de)
+- Italian (it)
+- Japanese (ja)
+- Korean (ko)
+- Persian (fa)
+- Polish (po)
+- Portuguese (pt)
+- Russion (ru)
+- Spanish (es)
+- Swedish (sv)
+- Ukrainian (uk)
+- Vietnamese (vi)
+
 ## API
 
 ### Authentication
