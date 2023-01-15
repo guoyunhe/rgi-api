@@ -1,12 +1,8 @@
 import { BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm';
-import { DateTime } from 'luxon';
 import Model from './Model';
 import Title from './Title';
 
 export default class Game extends Model {
-  @column({ isPrimary: true })
-  public id: number;
-
   /** Title ID that the game belongs to */
   @column()
   public titleId: number;
@@ -21,15 +17,54 @@ export default class Game extends Model {
   /** Name in Arabic */
   @column()
   public nameAr: string;
+  /** Name in German */
+  @column()
+  public nameDe: string;
+  /** Name in Spanish */
+  @column()
+  public nameEs: string;
+  /** Name in Persian */
+  @column()
+  public nameFa: string;
+  /** Name in Finnish */
+  @column()
+  public nameFi: string;
+  /** Name in French */
+  @column()
+  public nameFr: string;
   /** Name in Hindi */
   @column()
   public nameHi: string;
+  /** Name in Italian */
+  @column()
+  public nameIt: string;
   /** Name in Japanese */
   @column()
   public nameJa: string;
   /** Name in Korean */
   @column()
   public nameKo: string;
+  /** Name in Dutch */
+  @column()
+  public nameNl: string;
+  /** Name in Polish */
+  @column()
+  public namePo: string;
+  /** Name in Portuguese */
+  @column()
+  public namePt: string;
+  /** Name in Russion */
+  @column()
+  public nameRu: string;
+  /** Name in Swedish */
+  @column()
+  public nameSv: string;
+  /** Name in Ukrainian */
+  @column()
+  public nameUk: string;
+  /** Name in Vietnamese */
+  @column()
+  public nameVi: string;
   /** Name in Chinese */
   @column()
   public nameZh: string;
@@ -57,10 +92,4 @@ export default class Game extends Model {
   /** Game version */
   @column()
   public version: string | null;
-
-  @column.dateTime({ autoCreate: true })
-  public createdAt: DateTime;
-
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public updatedAt: DateTime;
 }

@@ -1,12 +1,8 @@
 import { BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm';
-import { DateTime } from 'luxon';
 import Game from './Game';
 import Model from './Model';
 
 export default class Rom extends Model {
-  @column({ isPrimary: true })
-  public id: number;
-
   /** Game ID that the rom belongs to */
   @column()
   public gameId: number;
@@ -38,10 +34,4 @@ export default class Rom extends Model {
   /** Additional description for non-standard or modified ROM */
   @column()
   public description: string | null;
-
-  @column.dateTime({ autoCreate: true })
-  public createdAt: DateTime;
-
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public updatedAt: DateTime;
 }

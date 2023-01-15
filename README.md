@@ -90,24 +90,26 @@ sudo systemctl restart pm2-root
 
 ## Internationalization
 
+English (en) is the source language of the database. Other supported languages for translations:
+
 - Aribic (ar)
-- Chinese (zh)
-- Dutch (nl)
-- English (en)
+- German (de)
+- Spanish (es)
+- Persian (fa)
 - Finnish (fi)
 - French (fr)
-- German (de)
+- Hindi (hi)
 - Italian (it)
 - Japanese (ja)
 - Korean (ko)
-- Persian (fa)
+- Dutch (nl)
 - Polish (po)
 - Portuguese (pt)
 - Russion (ru)
-- Spanish (es)
 - Swedish (sv)
 - Ukrainian (uk)
 - Vietnamese (vi)
+- Chinese (zh)
 
 ## API
 
