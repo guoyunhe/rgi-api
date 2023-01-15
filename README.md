@@ -25,6 +25,9 @@ npm install
 # migrate database schema
 node ace migration:run
 
+# seed database content
+node ace db:seed
+
 # start server with auto-reload
 node ace serve --watch
 ```
