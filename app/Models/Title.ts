@@ -34,6 +34,25 @@ export default class Title extends Model {
   @column()
   public nameZh: string;
 
+  /** Wikipedia in English */
+  @column()
+  public wikipedia: string;
+  /** Wikipedia in Arabic */
+  @column()
+  public wikipediaAr: string;
+  /** Wikipedia in Hindi */
+  @column()
+  public wikipediaHi: string;
+  /** Wikipedia in Japanese */
+  @column()
+  public wikipediaJa: string;
+  /** Wikipedia in Korean */
+  @column()
+  public wikipediaKr: string;
+  /** Wikipedia in Chinese */
+  @column()
+  public wikipediaZh: string;
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;
 
