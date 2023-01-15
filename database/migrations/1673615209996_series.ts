@@ -11,7 +11,7 @@ export default class extends BaseSchema {
       table.string('name_ar').nullable();
       table.string('name_hi').nullable();
       table.string('name_ja').nullable();
-      table.string('name_kr').nullable();
+      table.string('name_ko').nullable();
       table.string('name_zh').nullable();
 
       table.timestamp('created_at', { useTz: true });

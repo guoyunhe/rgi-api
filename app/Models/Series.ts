@@ -20,7 +20,7 @@ export default class Series extends Model {
   public nameJa: string;
   /** Name in Korean */
   @column()
-  public nameKr: string;
+  public nameKo: string;
   /** Name in Chinese */
   @column()
   public nameZh: string;
