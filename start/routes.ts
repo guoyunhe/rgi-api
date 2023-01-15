@@ -20,6 +20,12 @@
 
 import Route from '@ioc:Adonis/Core/Route';
 import './routes/auth';
+
 Route.get('/', async ({ i18n }) => {
   return { hello: i18n.formatMessage('messages.hello') };
 });
+
+Route.resource('series', 'SeriesController').apiOnly();
+Route.resource('titles', 'TitlesController').apiOnly();
+Route.resource('games', 'GamesController').apiOnly();
+Route.resource('roms', 'RomsController').apiOnly();

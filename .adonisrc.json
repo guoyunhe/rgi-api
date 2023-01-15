@@ -28,6 +28,11 @@
         "name": "functional",
         "files": ["tests/functional/**/*.spec(.ts|.js)"],
         "timeout": 60000
+      },
+      {
+        "name": "utils",
+        "files": ["utils/**/*.spec(.ts|.js)"],
+        "timeout": 5000
       }
     ]
   },

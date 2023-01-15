@@ -1,26 +1,19 @@
-import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm';
+import { BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm';
 import { DateTime } from 'luxon';
-import GamePort from './GamePort';
+import Game from './Game';
+import Model from './Model';
 
-export default class GameRom extends BaseModel {
+export default class Rom extends Model {
   @column({ isPrimary: true })
   public id: number;
 
-  /** Game port ID that the rom belongs to */
+  /** Game ID that the rom belongs to */
   @column()
-  public gamePortId: number;
+  public gameId: number;
 
-  /** Game port that the rom belongs to */
-  @belongsTo(() => GamePort)
-  public gamePort: BelongsTo<typeof GamePort>;
-
-  /** Disc 1, Disc 2, etc. */
-  @column()
-  public discNumber: number;
-
-  /** Serial of game disc or cartridge, not available for old platform and indie games */
-  @column()
-  public serial: number | null;
+  /** Game that the rom belongs to */
+  @belongsTo(() => Game)
+  public game: BelongsTo<typeof Game>;
 
   /** Size in byte */
   @column()

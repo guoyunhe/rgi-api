@@ -1,7 +1,8 @@
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm';
+import { column } from '@ioc:Adonis/Lucid/Orm';
 import { DateTime } from 'luxon';
+import Model from './Model';
 
-export default class GameSeries extends BaseModel {
+export default class Series extends Model {
   @column({ isPrimary: true })
   public id: number;
 

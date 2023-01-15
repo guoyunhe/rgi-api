@@ -1,23 +1,19 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema';
 
 export default class extends BaseSchema {
-  protected tableName = 'game_roms';
+  protected tableName = 'roms';
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id');
 
       table
-        .integer('game_port_id')
+        .integer('game_id')
         .unsigned()
         .notNullable()
         .references('id')
-        .inTable('game_ports')
+        .inTable('games')
         .onDelete('CASCADE');
-
-      table.integer('disc_number').defaultTo(1);
-
-      table.string('serial').nullable();
 
       table.integer('size').nullable();
       table.string('md5', 32).nullable();

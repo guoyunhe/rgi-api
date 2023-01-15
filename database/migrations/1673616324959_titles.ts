@@ -1,22 +1,26 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema';
 
 export default class extends BaseSchema {
-  protected tableName = 'game_ports';
+  protected tableName = 'titles';
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id');
 
       table
-        .integer('game_title_id')
+        .integer('series_id')
         .unsigned()
-        .notNullable()
+        .nullable()
         .references('id')
-        .inTable('game_titles')
-        .onDelete('CASCADE');
+        .inTable('series')
+        .onDelete('SET NULL');
 
-      table.string('platform').notNullable();
-      table.string('region').nullable();
+      table.string('name').notNullable().unique();
+      table.string('name_ar').nullable();
+      table.string('name_hi').nullable();
+      table.string('name_ja').nullable();
+      table.string('name_kr').nullable();
+      table.string('name_zh').nullable();
 
       table.timestamp('created_at', { useTz: true });
       table.timestamp('updated_at', { useTz: true });
