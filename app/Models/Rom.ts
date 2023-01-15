@@ -15,9 +15,17 @@ export default class Rom extends Model {
   @belongsTo(() => Game)
   public game: BelongsTo<typeof Game>;
 
+  /** File name */
+  @column()
+  public name: number | null;
+
   /** Size in byte */
   @column()
   public size: number | null;
+
+  /** CRC checksum */
+  @column()
+  public crc: string | null;
 
   /** MD5 checksum */
   @column()

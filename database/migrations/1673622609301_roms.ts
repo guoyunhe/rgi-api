@@ -15,7 +15,9 @@ export default class extends BaseSchema {
         .inTable('games')
         .onDelete('CASCADE');
 
-      table.integer('size').nullable();
+      table.string('name').nullable();
+      table.bigInteger('size').nullable();
+      table.string('crc', 8).nullable();
       table.string('md5', 32).nullable();
       table.string('sha1', 40).nullable();
 
