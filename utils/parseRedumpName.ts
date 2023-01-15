@@ -39,8 +39,6 @@ const allRegions = [
 
 const regionRegex = new RegExp(`\\(((?:${allRegions.join('|')}|, )+)\\)`);
 
-let count = 0;
-
 /**
  * Parse Redump game name and get regions, languages, disc number and regular game title.
  *

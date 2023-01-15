@@ -3,6 +3,11 @@ import glob from 'fast-glob';
 import { XMLParser } from 'fast-xml-parser';
 import { readFile, rm } from 'fs/promises';
 
+/**
+ * Download Redump data
+ * @see http://wiki.redump.org/index.php?title=Redump_Search_Parameters
+ * @see https://github.com/RobLoach/libretro-dats/blob/master/download.js
+ */
 export default async function fetchRedumpDat(platform: string) {
   const dist = `tmp/redump-${platform}`;
   await rm(dist, { force: true, recursive: true });
