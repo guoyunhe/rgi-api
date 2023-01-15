@@ -22,6 +22,13 @@ export default class extends BaseSchema {
       table.string('name_kr').nullable();
       table.string('name_zh').nullable();
 
+      table.string('wikipedia').nullable();
+      table.string('wikipedia_ar').nullable();
+      table.string('wikipedia_hi').nullable();
+      table.string('wikipedia_ja').nullable();
+      table.string('wikipedia_kr').nullable();
+      table.string('wikipedia_zh').nullable();
+
       table.timestamp('created_at', { useTz: true });
       table.timestamp('updated_at', { useTz: true });
     });
