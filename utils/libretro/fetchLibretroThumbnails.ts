@@ -29,10 +29,9 @@ export default async function fetchLibretroThumbnails(
       total++;
       const name = boxart.name
         .substring(0, boxart.name.length - 4)
-        .replaceAll(/\s+/g, ' ');
-      const game = await Game.query()
-        .where({ name: name.replaceAll('_', '%'), platform })
-        .first();
+        .replaceAll(/\s+/g, ' ')
+        .replaceAll('_', '&');
+      const game = await Game.query().where({ name, platform }).first();
       if (game) {
       } else {
         notMatched++;
