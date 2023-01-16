@@ -5,6 +5,8 @@ export default class extends BaseSeeder {
   protected platform = 'PS2';
 
   public async run() {
-    await seedRedumpDat(this.platform);
+    if (false) {
+      await seedRedumpDat(this.platform);
+    }
   }
 }
