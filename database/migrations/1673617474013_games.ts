@@ -15,6 +15,38 @@ export default class extends BaseSchema {
         .inTable('titles')
         .onDelete('SET NULL');
 
+      table
+        .integer('boxart_image_id')
+        .unsigned()
+        .nullable()
+        .references('id')
+        .inTable('images')
+        .onDelete('SET NULL');
+
+      table
+        .integer('title_image_id')
+        .unsigned()
+        .nullable()
+        .references('id')
+        .inTable('images')
+        .onDelete('SET NULL');
+
+      table
+        .integer('snap_image_id')
+        .unsigned()
+        .nullable()
+        .references('id')
+        .inTable('images')
+        .onDelete('SET NULL');
+
+      table
+        .integer('boxart_id')
+        .unsigned()
+        .nullable()
+        .references('id')
+        .inTable('images')
+        .onDelete('SET NULL');
+
       table.string('name');
       table.string('name_ar').nullable();
       table.string('name_de').nullable();

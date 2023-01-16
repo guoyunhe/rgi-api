@@ -1,4 +1,5 @@
 import { BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm';
+import Image from './Image';
 import Model from './Model';
 import Title from './Title';
 
@@ -10,6 +11,30 @@ export default class Game extends Model {
   /** Title that the game belongs to */
   @belongsTo(() => Title)
   public title: BelongsTo<typeof Title>;
+
+  /** Boxart image ID */
+  @column()
+  public boxartImageId: number;
+
+  /** Boxart image */
+  @belongsTo(() => Image)
+  public boxartImage: BelongsTo<typeof Image>;
+
+  /** Title image ID */
+  @column()
+  public titleImageId: number;
+
+  /** Title image */
+  @belongsTo(() => Image)
+  public titleImage: BelongsTo<typeof Image>;
+
+  /** Snap image ID */
+  @column()
+  public snapImageId: number;
+
+  /** Snap image */
+  @belongsTo(() => Image)
+  public snapImage: BelongsTo<typeof Image>;
 
   /** Name in English */
   @column()

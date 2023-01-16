@@ -1,4 +1,5 @@
 import Game from 'App/Models/Game';
+import Image from 'App/Models/Image';
 import download from 'download';
 import { existsSync } from 'fs';
 import { readdir } from 'fs/promises';
@@ -57,7 +58,23 @@ export default async function fetchLibretroThumbnails(
             .where({ name: nameNoRev + ' (Disc 1)', platform })
             .first();
         }
-        if (!game) {
+        if (game) {
+          const image = await Image.createFromLocalFile(
+            thumbTypeRoot + '/' + thumb.name
+          );
+          switch (thumbType) {
+            case 'Boxart':
+              game.boxartImageId = image.id;
+              break;
+            case 'Snap':
+              game.snapImageId = image.id;
+              break;
+            case 'Title':
+              game.titleImageId = image.id;
+              break;
+          }
+          await game.save();
+        } else {
           notMatched++;
           console.log(
             platform,
