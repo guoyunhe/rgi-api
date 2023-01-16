@@ -8,13 +8,7 @@ import parseRedumpName from '../redump/parseRedumpName';
 const thumbnailTypes = ['Boxart', 'Snap', 'Title'];
 
 function filterThumbnail(fileName: string) {
-  return (
-    !fileName.includes('(Demo)') &&
-    !fileName.includes('(Beta)') &&
-    !fileName.includes('[PSOne Books]') &&
-    !fileName.includes('[Konami the Best]') &&
-    !fileName.includes('[Playstation the Best]')
-  );
+  return !fileName.includes('(Demo)') && !fileName.includes('(Beta)');
 }
 
 export default async function fetchLibretroThumbnails(
