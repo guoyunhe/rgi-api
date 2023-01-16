@@ -1,4 +1,6 @@
 const discRegex = /\(Disc ([0-9]+)\)/;
+const revRegex = /\(Rev ([0-9]+)\)/;
+const altRegex = /\(Alt\)/;
 const langRegex = /\(([A-Z][a-z](?:,[A-Z][a-z])*)\)/;
 const allRegions = [
   'Asia',
@@ -52,6 +54,12 @@ export default function parseRedumpName(name: string) {
   const discMatch = name.match(discRegex);
   const disc = discMatch ? parseInt(discMatch[1]) : 1;
 
+  const nameNoRev = name
+    .replace(revRegex, '')
+    .replace(altRegex, '') // remove (Alt)
+    .replace(/\s+/g, ' ') // combine spaces
+    .trim();
+
   let title = name.substring(0, regionMatch?.index);
 
   [
@@ -79,6 +87,7 @@ export default function parseRedumpName(name: string) {
 
   return {
     title,
+    nameNoRev,
     disc,
     regions,
     languages,

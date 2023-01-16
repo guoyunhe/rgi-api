@@ -2,6 +2,9 @@ import Game from 'App/Models/Game';
 import download from 'download';
 import { existsSync } from 'fs';
 import { readdir } from 'fs/promises';
+import parseRedumpName from '../redump/parseRedumpName';
+
+const thumbnailTypes = ['Boxart', 'Snap', 'Title'];
 
 function filterThumbnail(fileName: string) {
   return (
@@ -28,34 +31,53 @@ export default async function fetchLibretroThumbnails(
     );
   }
   const root = `${dist}/${repo}-master`;
-  const boxartRoot = `${root}/Named_Boxarts`;
-  const boxarts = await readdir(boxartRoot, { withFileTypes: true });
 
-  let notMatched = 0;
-  let total = 0;
-  for (let i = 0; i < boxarts.length; i++) {
-    const boxart = boxarts[i];
-    if (boxart.isFile() && filterThumbnail(boxart.name)) {
-      total++;
-      const name = boxart.name
-        .substring(0, boxart.name.length - 4)
-        .replaceAll(/\s+/g, ' ')
-        .replaceAll('_', '&');
-      let game = await Game.query().where({ name, platform }).first();
-      if (!game) {
-        game = await Game.query()
-          .where({ name: name + ' (Disc 1)', platform })
+  for (let i = 0; i < thumbnailTypes.length; i++) {
+    const thumbType = thumbnailTypes[i];
+    const thumbTypeRoot = `${root}/Named_${thumbType}s`;
+    const thumbs = await readdir(thumbTypeRoot, { withFileTypes: true });
+
+    let notMatched = 0;
+    let total = 0;
+
+    for (let j = 0; j < thumbs.length; j++) {
+      const thumb = thumbs[j];
+      if (thumb.isFile() && filterThumbnail(thumb.name)) {
+        total++;
+        const name = thumb.name
+          .substring(0, thumb.name.length - 4)
+          .replaceAll(/\s+/g, ' ')
+          .replaceAll('_', '&');
+        const { nameNoRev } = parseRedumpName(name);
+        let game = await Game.query()
+          .where({ name: nameNoRev, platform })
           .first();
-      }
-      if (!game) {
-        notMatched++;
-        console.log('\x1b[31m', 'Boxart not matched', '\x1b[0m', boxart.name);
+        if (!game) {
+          game = await Game.query()
+            .where({ name: nameNoRev + ' (Disc 1)', platform })
+            .first();
+        }
+        if (!game) {
+          notMatched++;
+          console.log(
+            platform,
+            thumbType,
+            '\x1b[31m',
+            'NotMatched',
+            '\x1b[0m',
+            thumb.name
+          );
+        }
       }
     }
+    console.log(
+      platform,
+      thumbType,
+      '\x1b[31m',
+      'NotMatched',
+      '\x1b[0m',
+      notMatched,
+      ((notMatched / total) * 100).toFixed(2) + '%'
+    );
   }
-  console.log(
-    notMatched,
-    'not matched boxart.',
-    ((notMatched / total) * 100).toFixed(2) + '%'
-  );
 }
