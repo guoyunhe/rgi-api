@@ -15,7 +15,7 @@ export default class extends BaseSchema {
         .inTable('users')
         .onDelete('SET NULL');
 
-      table.string('path').notNullable();
+      table.string('path').notNullable().unique();
       table.string('mime').notNullable();
       table.integer('size').notNullable();
       table.integer('width').notNullable();

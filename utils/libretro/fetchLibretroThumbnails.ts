@@ -3,6 +3,16 @@ import download from 'download';
 import { existsSync } from 'fs';
 import { readdir } from 'fs/promises';
 
+function filterThumbnail(fileName: string) {
+  return (
+    !fileName.includes('(Demo)') &&
+    !fileName.includes('(Beta)') &&
+    !fileName.includes('[PSOne Books]') &&
+    !fileName.includes('[Konami the Best]') &&
+    !fileName.includes('[Playstation the Best]')
+  );
+}
+
 export default async function fetchLibretroThumbnails(
   platform: string,
   repo: string
@@ -25,15 +35,19 @@ export default async function fetchLibretroThumbnails(
   let total = 0;
   for (let i = 0; i < boxarts.length; i++) {
     const boxart = boxarts[i];
-    if (boxart.isFile()) {
+    if (boxart.isFile() && filterThumbnail(boxart.name)) {
       total++;
       const name = boxart.name
         .substring(0, boxart.name.length - 4)
         .replaceAll(/\s+/g, ' ')
         .replaceAll('_', '&');
-      const game = await Game.query().where({ name, platform }).first();
-      if (game) {
-      } else {
+      let game = await Game.query().where({ name, platform }).first();
+      if (!game) {
+        game = await Game.query()
+          .where({ name: name + ' (Disc 1)', platform })
+          .first();
+      }
+      if (!game) {
         notMatched++;
         console.log('\x1b[31m', 'Boxart not matched', '\x1b[0m', boxart.name);
       }
