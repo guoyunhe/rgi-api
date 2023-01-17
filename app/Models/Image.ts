@@ -6,24 +6,31 @@ import sizeOf from 'image-size';
 import Model from './Model';
 
 export default class Image extends Model {
+  /** User id of who uploaded the image */
   @column()
   public userId: number | null;
 
+  /** File storage path, images/<md5> */
   @column()
   public path: string;
 
+  /** File mime type */
   @column()
   public mime: string;
 
+  /** File size in bytes */
   @column()
   public size: number;
 
+  /** Image width in pixels */
   @column()
   public width: number;
 
+  /** Image height in pixels */
   @column()
   public height: number;
 
+  /** Image public url */
   @computed()
   public get url() {
     return '/storage/' + this.path;

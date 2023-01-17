@@ -14,7 +14,7 @@ export default class Game extends Model {
 
   /** Main game ID (Disc 1) that the game (Disc 2,3,...) belongs to */
   @column()
-  public mainId: number;
+  public mainId: number | null;
 
   /** Main game (Disc 1) that the game (Disc 2,3,...) belongs to */
   @belongsTo(() => Game)
@@ -22,7 +22,7 @@ export default class Game extends Model {
 
   /** Boxart image ID */
   @column()
-  public boxartImageId: number;
+  public boxartImageId: number | null;
 
   /** Boxart image */
   @belongsTo(() => Image)
@@ -30,7 +30,7 @@ export default class Game extends Model {
 
   /** Title image ID */
   @column()
-  public titleImageId: number;
+  public titleImageId: number | null;
 
   /** Title image */
   @belongsTo(() => Image)
@@ -38,7 +38,7 @@ export default class Game extends Model {
 
   /** Snap image ID */
   @column()
-  public snapImageId: number;
+  public snapImageId: number | null;
 
   /** Snap image */
   @belongsTo(() => Image)
