@@ -31,9 +31,6 @@ export default class GamesController {
       query = query.whereNotNull('snapImageId');
     }
 
-    return query.paginate(
-      request.input('page', 1),
-      request.input('perPage', 12)
-    );
+    return query.paginate(request.input('page', 1), request.input('perPage', 12));
   }
 }

@@ -11,10 +11,7 @@ function filterThumbnail(fileName: string) {
   return !fileName.includes('(Demo)') && !fileName.includes('(Beta)');
 }
 
-export default async function fetchLibretroThumbnails(
-  platform: string,
-  repo: string
-) {
+export default async function fetchLibretroThumbnails(platform: string, repo: string) {
   const dist = `tmp/libretro-thumbnail-${platform.toLowerCase()}`;
   if (!existsSync(dist)) {
     await download(
@@ -44,9 +41,7 @@ export default async function fetchLibretroThumbnails(
           .replaceAll(/\s+/g, ' ')
           .replaceAll('_', '&');
         const { mainName } = parseRedumpName(name);
-        let game = await Game.query()
-          .where({ name: mainName, platform })
-          .first();
+        let game = await Game.query().where({ name: mainName, platform }).first();
         if (!game) {
           game = await Game.query()
             .where({ name: mainName + ' (Disc 1)', platform })
@@ -56,9 +51,7 @@ export default async function fetchLibretroThumbnails(
           game = await Game.find(game.mainId);
         }
         if (game) {
-          const image = await Image.createFromLocalFile(
-            thumbTypeRoot + '/' + thumb.name
-          );
+          const image = await Image.createFromLocalFile(thumbTypeRoot + '/' + thumb.name);
           switch (thumbType) {
             case 'Boxart':
               game.boxartImageId = image.id;
@@ -73,14 +66,7 @@ export default async function fetchLibretroThumbnails(
           await game.save();
         } else {
           notMatched++;
-          console.log(
-            platform,
-            thumbType,
-            '\x1b[31m',
-            'NotMatched',
-            '\x1b[0m',
-            thumb.name
-          );
+          console.log(platform, thumbType, '\x1b[31m', 'NotMatched', '\x1b[0m', thumb.name);
         }
       }
     }

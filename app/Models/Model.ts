@@ -1,10 +1,5 @@
 import { string } from '@ioc:Adonis/Core/Helpers';
-import {
-  BaseModel,
-  column,
-  LucidModel,
-  SnakeCaseNamingStrategy,
-} from '@ioc:Adonis/Lucid/Orm';
+import { BaseModel, column, LucidModel, SnakeCaseNamingStrategy } from '@ioc:Adonis/Lucid/Orm';
 import { DateTime } from 'luxon';
 
 class CamelCaseNamingStrategy extends SnakeCaseNamingStrategy {

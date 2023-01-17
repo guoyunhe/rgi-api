@@ -11,13 +11,9 @@ import { readFile, rm } from 'fs/promises';
 export default async function fetchRedumpDat(platform: string) {
   const dist = `tmp/redump-${platform}`;
   await rm(dist, { force: true, recursive: true });
-  await download(
-    `http://redump.org/datfile/${platform}/serial,version,disc`,
-    dist,
-    {
-      extract: true,
-    }
-  );
+  await download(`http://redump.org/datfile/${platform}/serial,version,disc`, dist, {
+    extract: true,
+  });
   const file = (await glob(dist + '/*.dat'))[0];
   const xml = await readFile(file, 'utf-8');
   const parser = new XMLParser({
