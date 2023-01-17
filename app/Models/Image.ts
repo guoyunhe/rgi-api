@@ -1,4 +1,5 @@
 import Drive from '@ioc:Adonis/Core/Drive';
+import Env from '@ioc:Adonis/Core/Env';
 import { column, computed } from '@ioc:Adonis/Lucid/Orm';
 import { createHash } from 'crypto';
 import { readFile, stat } from 'fs/promises';
@@ -33,7 +34,7 @@ export default class Image extends Model {
   /** Image public url */
   @computed()
   public get url() {
-    return '/storage/' + this.path;
+    return `//${Env.get('HOST')}:${Env.get('PORT')}/storage/${this.path}`;
   }
 
   public static async createFromLocalFile(filePath: string, userId?: number) {
