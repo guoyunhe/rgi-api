@@ -33,7 +33,7 @@ export default class GamesController {
 
     return query.paginate(
       request.input('page', 1),
-      request.input('perPage', 10)
+      request.input('perPage', 12)
     );
   }
 }
