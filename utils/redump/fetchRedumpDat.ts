@@ -25,8 +25,8 @@ export default async function fetchRedumpDat(platform: string) {
     attributeNamePrefix: '',
   });
   const data = parser.parse(xml);
-  const games = data.datafile.game.filter(
-    (item: any) => item.category === 'Games'
-  );
+  const games = data.datafile.game
+    .filter((item: any) => item.category === 'Games')
+    .sort((a: any, b: any) => a.name.localeCompare(b.name));
   return games;
 }

@@ -16,6 +16,14 @@ export default class extends BaseSchema {
         .onDelete('SET NULL');
 
       table
+        .integer('main_id')
+        .unsigned()
+        .nullable()
+        .references('id')
+        .inTable('games')
+        .onDelete('SET NULL');
+
+      table
         .integer('boxart_image_id')
         .unsigned()
         .nullable()

@@ -52,6 +52,9 @@ export default async function fetchLibretroThumbnails(
             .where({ name: nameNoRev + ' (Disc 1)', platform })
             .first();
         }
+        if (game?.mainId) {
+          game = await Game.find(game.mainId);
+        }
         if (game) {
           const image = await Image.createFromLocalFile(
             thumbTypeRoot + '/' + thumb.name

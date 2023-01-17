@@ -12,6 +12,14 @@ export default class Game extends Model {
   @belongsTo(() => Title)
   public title: BelongsTo<typeof Title>;
 
+  /** Main game ID (Disc 1) that the game (Disc 2,3,...) belongs to */
+  @column()
+  public mainId: number;
+
+  /** Main game (Disc 1) that the game (Disc 2,3,...) belongs to */
+  @belongsTo(() => Game)
+  public main: BelongsTo<typeof Game>;
+
   /** Boxart image ID */
   @column()
   public boxartImageId: number;

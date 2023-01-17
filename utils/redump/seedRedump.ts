@@ -54,6 +54,19 @@ export default async function seedRedumpDat(platform: string) {
       needSave = true;
     }
 
+    if (game.disc > 1 && !game.mainId) {
+      const mainGame = await Game.query()
+        .where({
+          name: game.name.replace(/\(Disc \d+\)/, '(Disc 1)'),
+          platform: platform.toUpperCase(),
+        })
+        .first();
+      if (mainGame) {
+        game.mainId = mainGame.id;
+        needSave = true;
+      }
+    }
+
     if (needSave) {
       await game.save();
     }
