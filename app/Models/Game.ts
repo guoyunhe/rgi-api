@@ -25,7 +25,7 @@ export default class Game extends Model {
   public boxartImageId: number | null;
 
   /** Boxart image */
-  @belongsTo(() => Image)
+  @belongsTo(() => Image, { foreignKey: 'boxartImageId' })
   public boxartImage: BelongsTo<typeof Image>;
 
   /** Title image ID */
@@ -33,7 +33,7 @@ export default class Game extends Model {
   public titleImageId: number | null;
 
   /** Title image */
-  @belongsTo(() => Image)
+  @belongsTo(() => Image, { foreignKey: 'titleImageId' })
   public titleImage: BelongsTo<typeof Image>;
 
   /** Snap image ID */
@@ -41,7 +41,7 @@ export default class Game extends Model {
   public snapImageId: number | null;
 
   /** Snap image */
-  @belongsTo(() => Image)
+  @belongsTo(() => Image, { foreignKey: 'snapImageId' })
   public snapImage: BelongsTo<typeof Image>;
 
   /** Name in English */

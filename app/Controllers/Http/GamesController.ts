@@ -3,7 +3,9 @@ import Game from 'App/Models/Game';
 
 export default class GamesController {
   public async index({ request }: HttpContextContract) {
-    let query = Game.query().whereNull('mainId');
+    let query = Game.query();
+    query = query.whereNull('mainId');
+    query = query.preload('boxartImage');
 
     if (request.input('noBoxartImage')) {
       query = query.whereNull('boxartImageId');
