@@ -54,9 +54,10 @@ export default function parseRedumpName(name: string) {
   const discMatch = name.match(discRegex);
   const disc = discMatch ? parseInt(discMatch[1]) : 1;
 
-  const nameNoRev = name
-    .replace(revRegex, '')
+  const mainName = name
+    .replace(revRegex, '') // remove (Rev 1)
     .replace(altRegex, '') // remove (Alt)
+    .replace(discRegex, '(Disc 1)') // change (Disc 2) to (Disc 1)
     .replace(/\s+/g, ' ') // combine spaces
     .trim();
 
@@ -87,7 +88,7 @@ export default function parseRedumpName(name: string) {
 
   return {
     title,
-    nameNoRev,
+    mainName,
     disc,
     regions,
     languages,

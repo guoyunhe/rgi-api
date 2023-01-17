@@ -43,13 +43,13 @@ export default async function fetchLibretroThumbnails(
           .substring(0, thumb.name.length - 4)
           .replaceAll(/\s+/g, ' ')
           .replaceAll('_', '&');
-        const { nameNoRev } = parseRedumpName(name);
+        const { mainName } = parseRedumpName(name);
         let game = await Game.query()
-          .where({ name: nameNoRev, platform })
+          .where({ name: mainName, platform })
           .first();
         if (!game) {
           game = await Game.query()
-            .where({ name: nameNoRev + ' (Disc 1)', platform })
+            .where({ name: mainName + ' (Disc 1)', platform })
             .first();
         }
         if (game?.mainId) {

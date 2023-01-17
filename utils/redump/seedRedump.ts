@@ -12,38 +12,33 @@ export default async function seedRedumpDat(platform: string) {
     const { serial, name, version, rom } = data[i] as any;
     if (!serial) continue;
 
-    const { regions, languages, title, nameNoRev, disc } =
-      parseRedumpName(name);
+    const { regions, languages, title, mainName, disc } = parseRedumpName(name);
     const parsedSerial = parseSerial(platform, serial);
 
     const game = await Game.firstOrNew({
+      name,
       serial: parsedSerial,
       platform: platform.toUpperCase(),
     });
 
     let needSave = !game.id;
 
-    if (!game.name) {
-      game.name = nameNoRev;
-      needSave = true;
-    }
-
-    if (!game.version) {
+    if (game.version !== version) {
       game.version = version;
       needSave = true;
     }
 
-    if (!game.disc) {
+    if (game.disc !== disc) {
       game.disc = disc;
       needSave = true;
     }
 
-    if (!game.regions) {
+    if (game.regions?.join() !== regions.join()) {
       game.regions = regions;
       needSave = true;
     }
 
-    if (!game.languages) {
+    if (game.languages?.join() !== languages.join()) {
       game.languages = languages;
       needSave = true;
     }
@@ -54,10 +49,10 @@ export default async function seedRedumpDat(platform: string) {
       needSave = true;
     }
 
-    if (game.disc > 1 && !game.mainId) {
+    if (!game.mainId && name !== mainName) {
       const mainGame = await Game.query()
         .where({
-          name: game.name.replace(/\(Disc \d+\)/, '(Disc 1)'),
+          name: mainName,
           platform: platform.toUpperCase(),
         })
         .first();
