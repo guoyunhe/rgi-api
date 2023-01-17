@@ -1,3 +1,4 @@
+import { string } from '@ioc:Adonis/Core/Helpers';
 import {
   BaseModel,
   column,
@@ -9,6 +10,30 @@ import { DateTime } from 'luxon';
 class CamelCaseNamingStrategy extends SnakeCaseNamingStrategy {
   public serializedName(_model: LucidModel, attributeName: string): string {
     return attributeName;
+  }
+
+  public relationLocalKey(
+    relation: string,
+    model: typeof BaseModel,
+    relatedModel: typeof BaseModel
+  ) {
+    if (relation === 'belongsTo') {
+      return relatedModel.primaryKey;
+    }
+
+    return model.primaryKey;
+  }
+
+  public relationForeignKey(
+    relation: string,
+    model: typeof BaseModel,
+    relatedModel: typeof BaseModel
+  ) {
+    if (relation === 'belongsTo') {
+      return string.camelCase(`${model.name}_${relatedModel.primaryKey}`);
+    }
+
+    return string.camelCase(`${model.name}_${model.primaryKey}`);
   }
 
   public paginationMetaKeys() {
