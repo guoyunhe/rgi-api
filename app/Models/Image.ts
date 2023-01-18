@@ -8,9 +8,15 @@ import sharp from 'sharp';
 import Model from './Model';
 
 /**
- * Boxarts, screenshots, etc.
+ * Boxart, title and snap images.
  *
  * All images are converted to PNG format, which is required by RetroArch.
+ *
+ * Sizes:
+ * - Boxart: max width 512px
+ * - Title and snap:
+ *   - PSX, PS2: max 640x480px
+ *   - PS3, PS4, NS: max 1280x720px
  */
 export default class Image extends Model {
   /** User id of who uploaded the image */
@@ -40,13 +46,36 @@ export default class Image extends Model {
     return `//${Env.get('HOST')}:${Env.get('PORT')}/storage/${this.path}`;
   }
 
-  public static async createFromLocalFile(filePath: string, userId?: number) {
+  public static async createFromLocalFile(
+    filePath: string,
+    options?: {
+      maxWidth?: number;
+      maxHeight?: number;
+      userId?: number;
+    }
+  ) {
     let buffer = await readFile(filePath);
-    const { width, height, type } = sizeOf(buffer);
+    let { width, height, type } = sizeOf(buffer);
 
-    // Convert to PNG
-    if (type !== 'png') {
-      buffer = await sharp(buffer).png().toBuffer();
+    if (!width || !height || !type) throw 'Invalid image file: ' + filePath;
+
+    // Resize and convert to PNG
+    const maxWidth = options?.maxWidth || 1280;
+    const maxHeight = options?.maxHeight || 960;
+    if (type !== 'png' || width > maxWidth || height > maxHeight) {
+      let pipe = sharp(buffer);
+      if (type !== 'png') {
+        pipe = pipe.png();
+        console.log('convert to png:', filePath);
+      }
+      if (width > maxWidth || height > maxHeight) {
+        pipe = pipe.resize({ width: maxWidth, height: maxHeight, fit: sharp.fit.inside });
+        const newImageSize = sizeOf(buffer);
+        width = newImageSize.width;
+        height = newImageSize.height;
+        console.log('resize:', filePath);
+      }
+      buffer = await pipe.toBuffer();
     }
 
     const hash = createHash('md5').update(buffer).digest('hex');
@@ -59,7 +88,7 @@ export default class Image extends Model {
     if (!image) {
       image = await Image.create({
         path,
-        userId,
+        userId: options?.userId,
         width,
         height,
         size,
