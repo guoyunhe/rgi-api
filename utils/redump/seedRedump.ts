@@ -12,7 +12,7 @@ export default async function seedRedumpDat(platform: string) {
     const { serial, name, version, rom } = data[i] as any;
     if (!serial) continue;
 
-    const { regions, languages, title, mainName, disc } = parseRedumpName(name);
+    const { region, language, title, mainName, disc } = parseRedumpName(name);
     const parsedSerial = parseSerial(platform, serial);
 
     const game = await Game.firstOrNew({
@@ -33,13 +33,13 @@ export default async function seedRedumpDat(platform: string) {
       needSave = true;
     }
 
-    if (game.regions?.join() !== regions.join()) {
-      game.regions = regions;
+    if (region && game.region !== region) {
+      game.region = region;
       needSave = true;
     }
 
-    if (game.languages?.join() !== languages.join()) {
-      game.languages = languages;
+    if (language && game.language !== language) {
+      game.language = language;
       needSave = true;
     }
 
