@@ -2,8 +2,9 @@ import Drive from '@ioc:Adonis/Core/Drive';
 import Env from '@ioc:Adonis/Core/Env';
 import { column, computed } from '@ioc:Adonis/Lucid/Orm';
 import { createHash } from 'crypto';
-import { readFile, stat } from 'fs/promises';
+import { readFile } from 'fs/promises';
 import sizeOf from 'image-size';
+import sharp from 'sharp';
 import Model from './Model';
 
 /**
@@ -40,17 +41,22 @@ export default class Image extends Model {
   }
 
   public static async createFromLocalFile(filePath: string, userId?: number) {
-    const buffer = await readFile(filePath);
+    let buffer = await readFile(filePath);
+    const { width, height, type } = sizeOf(buffer);
+
+    // Convert to PNG
+    if (type !== 'png') {
+      buffer = await sharp(buffer).png().toBuffer();
+    }
+
     const hash = createHash('md5').update(buffer).digest('hex');
     const path = 'images/' + hash;
-    const fullPath = process.cwd() + '/storage/' + path;
     if (!(await Drive.exists(path))) {
       await Drive.put(path, buffer);
     }
+    const size = buffer.byteLength;
     let image = await Image.findBy('path', path);
     if (!image) {
-      const { size } = await stat(fullPath);
-      const { width, height, type } = sizeOf(fullPath);
       image = await Image.create({
         path,
         userId,
