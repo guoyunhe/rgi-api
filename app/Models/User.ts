@@ -4,7 +4,7 @@ import Model from './Model';
 
 export default class User extends Model {
   @column()
-  public name: string;
+  public username: string;
 
   @column()
   public email: string;
