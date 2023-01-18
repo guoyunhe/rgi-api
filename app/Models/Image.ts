@@ -6,6 +6,11 @@ import { readFile, stat } from 'fs/promises';
 import sizeOf from 'image-size';
 import Model from './Model';
 
+/**
+ * Boxarts, screenshots, etc.
+ *
+ * All images are converted to PNG format, which is required by RetroArch.
+ */
 export default class Image extends Model {
   /** User id of who uploaded the image */
   @column()
@@ -14,10 +19,6 @@ export default class Image extends Model {
   /** File storage path, images/<md5> */
   @column()
   public path: string;
-
-  /** File mime type */
-  @column()
-  public mime: string;
 
   /** File size in bytes */
   @column()
@@ -53,7 +54,6 @@ export default class Image extends Model {
       image = await Image.create({
         path,
         userId,
-        mime: type,
         width,
         height,
         size,
