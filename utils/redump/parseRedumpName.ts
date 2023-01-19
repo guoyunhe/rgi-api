@@ -42,15 +42,15 @@ const allRegions = [
 const regionRegex = new RegExp(`\\(((?:${allRegions.join('|')}|, )+)\\)`);
 
 /**
- * Parse Redump game name and get regions, languages, disc number and regular game title.
+ * Parse Redump game name and get region, language, disc number and regular game title.
  *
  * Sims 2, The -> The Sims 2
  */
 export default function parseRedumpName(name: string) {
   const regionMatch = name.match(regionRegex);
-  const regions = regionMatch ? regionMatch[1].split(', ') : [];
+  const region = regionMatch?.[1];
   const langMatch = name.match(langRegex);
-  const languages = langMatch ? langMatch[1].split(',') : [];
+  const language = langMatch?.[1];
   const discMatch = name.match(discRegex);
   const disc = discMatch ? parseInt(discMatch[1]) : 1;
 
@@ -90,7 +90,7 @@ export default function parseRedumpName(name: string) {
     title,
     mainName,
     disc,
-    regions,
-    languages,
+    region,
+    language,
   };
 }

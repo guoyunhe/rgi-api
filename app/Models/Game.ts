@@ -108,11 +108,11 @@ export default class Game extends Model {
 
   /** Like Japan, USA, Europe */
   @column()
-  public regions: string[] | null;
+  public region: string | null;
 
   /** Like En, Fr, Pt */
   @column()
-  public languages: string[] | null;
+  public language: string | null;
 
   /** Disc 1, Disc 2, etc. */
   @column()
