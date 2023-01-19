@@ -10,14 +10,9 @@ export default class GamesController {
     query = query.preload('images');
 
     if (request.input('noBoxartImage')) {
-      query = query.whereHas(
-        'images',
-        (q) => {
-          q.where('type', 'boxart');
-        },
-        '=',
-        0
-      );
+      query = query.whereDoesntHave('images', (q) => {
+        q.where('type', 'boxart');
+      });
     }
 
     if (request.input('noSnapImage')) {
