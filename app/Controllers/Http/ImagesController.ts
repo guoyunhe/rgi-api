@@ -9,11 +9,11 @@ export default class ImagesController {
   }
 
   public async store({ request, response, auth }: HttpContextContract) {
-    const { imageFile, maxWidth, maxHeight } = await request.validate({
+    const { imageFile, maxWidth, maxHeight, type } = await request.validate({
       schema: schema.create({
         imageFile: schema.file(
           {
-            size: '2mb',
+            size: '20mb',
             extnames: ['jpeg', 'jpg', 'gif', 'png'],
           },
           [rules.required()]
@@ -29,6 +29,7 @@ export default class ImagesController {
         userId: auth.user?.id,
         maxWidth,
         maxHeight,
+        type: type as Image['type'],
       });
       // Remove tmp file to save disk space
       rm(imageFile.tmpPath);
