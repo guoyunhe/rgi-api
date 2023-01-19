@@ -1,35 +1,35 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import { rules, schema } from '@ioc:Adonis/Core/Validator';
 import Game from 'App/Models/Game';
+import Image from 'App/Models/Image';
 
 export default class GamesController {
   public async index({ request }: HttpContextContract) {
     let query = Game.query();
     query = query.whereNull('mainId');
-    query = query.preload('boxartImage');
+    query = query.preload('images');
 
     if (request.input('noBoxartImage')) {
-      query = query.whereNull('boxartImageId');
-    }
-
-    if (request.input('hasBoxartImage')) {
-      query = query.whereNotNull('boxartImageId');
-    }
-
-    if (request.input('noTitleImage')) {
-      query = query.whereNull('titleImageId');
-    }
-
-    if (request.input('hasTitleImage')) {
-      query = query.whereNotNull('titleImageId');
+      query = query.whereHas(
+        'images',
+        (q) => {
+          q.where('type', 'boxart');
+        },
+        '=',
+        0
+      );
     }
 
     if (request.input('noSnapImage')) {
-      query = query.whereNull('snapImageId');
+      query = query.whereDoesntHave('images', (q) => {
+        q.where('type', 'snap');
+      });
     }
 
-    if (request.input('hasSnapImage')) {
-      query = query.whereNotNull('snapImageId');
+    if (request.input('noTitleImage')) {
+      query = query.whereDoesntHave('images', (q) => {
+        q.where('type', 'title');
+      });
     }
 
     return query.paginate(request.input('page', 1), request.input('perPage', 12));
@@ -39,7 +39,7 @@ export default class GamesController {
     const game = await Game.find(request.param('id'));
 
     if (game) {
-      await game.load('boxartImage');
+      await game.load('images');
       return game;
     } else {
       return response.notFound();
@@ -51,16 +51,20 @@ export default class GamesController {
 
     if (!game) return response.notFound();
 
-    const { boxartImageId } = await request.validate({
+    const { addImageId } = await request.validate({
       schema: schema.create({
-        boxartImageId: schema.number([rules.exists({ table: 'images', column: 'id' })]),
+        addImageId: schema.number([rules.exists({ table: 'images', column: 'id' })]),
       }),
     });
 
-    game.boxartImageId = boxartImageId;
-    await game.save();
+    if (addImageId) {
+      const image = await Image.find(addImageId);
+      if (image) {
+        await game.related('images').save(image);
+      }
+    }
 
-    await game.load('boxartImage');
+    await game.load('images');
     return game;
   }
 }
