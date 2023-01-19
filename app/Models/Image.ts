@@ -53,7 +53,7 @@ export default class Image extends Model {
   public static async createFromLocalFile(
     filePath: string,
     options: {
-      type: 'avatar' | 'boxart' | 'snap' | 'title';
+      type: Image['type'];
       maxWidth?: number;
       maxHeight?: number;
       userId?: number;
