@@ -14,7 +14,7 @@ export default class ImagesController {
         maxHeight: schema.number([rules.unsigned(), rules.range(50, 1280)]),
         imageFile: schema.file({
           size: '2mb',
-          extnames: ['jpg', 'gif', 'png'],
+          extnames: ['jpeg', 'jpg', 'gif', 'png'],
         }),
       }),
     });
@@ -25,7 +25,7 @@ export default class ImagesController {
         maxWidth,
         maxHeight,
       });
-      return response.created(image);
+      return image;
     } else {
       return response.abort('Fail to upload image', 422);
     }

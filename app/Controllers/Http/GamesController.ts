@@ -1,4 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
+import { rules, schema } from '@ioc:Adonis/Core/Validator';
 import Game from 'App/Models/Game';
 
 export default class GamesController {
@@ -32,5 +33,34 @@ export default class GamesController {
     }
 
     return query.paginate(request.input('page', 1), request.input('perPage', 12));
+  }
+
+  public async show({ request, response }: HttpContextContract) {
+    const game = await Game.find(request.param('id'));
+
+    if (game) {
+      await game.load('boxartImage');
+      return game;
+    } else {
+      return response.notFound();
+    }
+  }
+
+  public async update({ request, response }: HttpContextContract) {
+    const game = await Game.find(request.param('id'));
+
+    if (!game) return response.notFound();
+
+    const { boxartImageId } = await request.validate({
+      schema: schema.create({
+        boxartImageId: schema.number([rules.exists({ table: 'images', column: 'id' })]),
+      }),
+    });
+
+    game.boxartImageId = boxartImageId;
+    await game.save();
+
+    await game.load('boxartImage');
+    return game;
   }
 }

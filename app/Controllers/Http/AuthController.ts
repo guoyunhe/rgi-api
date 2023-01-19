@@ -16,14 +16,14 @@ export default class GamesController {
     }
   }
 
-  public async logout({ auth, request, response }: HttpContextContract) {
+  public async logout({ auth }: HttpContextContract) {
     await auth.use('api').revoke();
     return {
       revoked: true,
     };
   }
 
-  public async register({ auth, request, response }: HttpContextContract) {
+  public async register({ auth, request }: HttpContextContract) {
     const validations = await schema.create({
       username: schema.string({}, [rules.unique({ table: 'users', column: 'username' })]),
       email: schema.string({}, [rules.email(), rules.unique({ table: 'users', column: 'email' })]),
@@ -32,10 +32,10 @@ export default class GamesController {
     const data = await request.validate({ schema: validations });
     const user = await User.create(data);
     const token = await auth.use('api').attempt(data.email, data.password);
-    return response.created({ user, token });
+    return { user, token };
   }
 
-  public async user({ auth, request, response }: HttpContextContract) {
-    return response.ok(auth.user || null);
+  public async user({ auth }: HttpContextContract) {
+    return auth.user;
   }
 }
