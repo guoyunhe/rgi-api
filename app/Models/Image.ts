@@ -25,7 +25,7 @@ export default class Image extends Model {
 
   /** Usage type, like avatar, boxart, title, snap */
   @column()
-  public type: string;
+  public type: 'avatar' | 'boxart' | 'snap' | 'title';
 
   /** File storage path, images/<md5> */
   @column()
@@ -52,24 +52,24 @@ export default class Image extends Model {
 
   public static async createFromLocalFile(
     filePath: string,
-    options?: {
-      type?: string;
+    options: {
+      type: 'avatar' | 'boxart' | 'snap' | 'title';
       maxWidth?: number;
       maxHeight?: number;
       userId?: number;
     }
   ) {
     let buffer = await readFile(filePath);
-    let { width, height, type } = sizeOf(buffer);
+    let { width, height, type: fileType } = sizeOf(buffer);
 
-    if (!width || !height || !type) throw 'Invalid image file: ' + filePath;
+    if (!width || !height || !fileType) throw 'Invalid image file: ' + filePath;
 
     // Resize and convert to PNG
     const maxWidth = options?.maxWidth || 1280;
     const maxHeight = options?.maxHeight || 960;
-    if (type !== 'png' || width > maxWidth || height > maxHeight) {
+    if (fileType !== 'png' || width > maxWidth || height > maxHeight) {
       let pipe = sharp(buffer);
-      if (type !== 'png') {
+      if (fileType !== 'png') {
         pipe = pipe.png();
         console.log('convert to png:', filePath);
       }
@@ -91,6 +91,7 @@ export default class Image extends Model {
     const size = buffer.byteLength;
     let image = await Image.findBy('path', path);
     if (!image) {
+      const type = options.type;
       image = await Image.create({
         type,
         path,

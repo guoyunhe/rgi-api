@@ -48,6 +48,7 @@ export default class Game extends Model {
   @column()
   public version: string | null;
 
+  /** Boxart, snap screen and title screen images */
   @manyToMany(() => Image)
   public images: ManyToMany<typeof Image>;
 }
