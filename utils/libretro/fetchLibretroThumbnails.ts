@@ -51,19 +51,10 @@ export default async function fetchLibretroThumbnails(platform: string, repo: st
           game = await Game.find(game.mainId);
         }
         if (game) {
-          const image = await Image.createFromLocalFile(thumbTypeRoot + '/' + thumb.name);
-          switch (thumbType) {
-            case 'Boxart':
-              game.boxartImageId = image.id;
-              break;
-            case 'Snap':
-              game.snapImageId = image.id;
-              break;
-            case 'Title':
-              game.titleImageId = image.id;
-              break;
-          }
-          await game.save();
+          const image = await Image.createFromLocalFile(thumbTypeRoot + '/' + thumb.name, {
+            type: thumbType.toLowerCase(),
+          });
+          await game.related('images').save(image);
         } else {
           notMatched++;
           console.log(platform, thumbType, '\x1b[31m', 'NotMatched', '\x1b[0m', thumb.name);

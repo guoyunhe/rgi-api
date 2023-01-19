@@ -11,12 +11,16 @@ export default class ImagesController {
   public async store({ request, response, auth }: HttpContextContract) {
     const { imageFile, maxWidth, maxHeight } = await request.validate({
       schema: schema.create({
+        imageFile: schema.file(
+          {
+            size: '2mb',
+            extnames: ['jpeg', 'jpg', 'gif', 'png'],
+          },
+          [rules.required()]
+        ),
         maxWidth: schema.number([rules.unsigned(), rules.range(50, 1280)]),
         maxHeight: schema.number([rules.unsigned(), rules.range(50, 1280)]),
-        imageFile: schema.file({
-          size: '2mb',
-          extnames: ['jpeg', 'jpg', 'gif', 'png'],
-        }),
+        type: schema.enum(['avatar', 'boxart', 'snap', 'title'], [rules.required()]),
       }),
     });
 

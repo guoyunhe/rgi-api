@@ -23,6 +23,10 @@ export default class Image extends Model {
   @column()
   public userId: number | null;
 
+  /** Usage type, like avatar, boxart, title, snap */
+  @column()
+  public type: string;
+
   /** File storage path, images/<md5> */
   @column()
   public path: string;
@@ -49,6 +53,7 @@ export default class Image extends Model {
   public static async createFromLocalFile(
     filePath: string,
     options?: {
+      type?: string;
       maxWidth?: number;
       maxHeight?: number;
       userId?: number;
@@ -87,6 +92,7 @@ export default class Image extends Model {
     let image = await Image.findBy('path', path);
     if (!image) {
       image = await Image.create({
+        type,
         path,
         userId: options?.userId,
         width,
