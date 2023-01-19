@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import { rules, schema } from '@ioc:Adonis/Core/Validator';
 import Image from 'App/Models/Image';
+import { rm } from 'fs/promises';
 
 export default class ImagesController {
   public async index({ request }: HttpContextContract) {
@@ -25,6 +26,8 @@ export default class ImagesController {
         maxWidth,
         maxHeight,
       });
+      // Remove tmp file to save disk space
+      rm(imageFile.tmpPath);
       return image;
     } else {
       return response.abort('Fail to upload image', 422);
