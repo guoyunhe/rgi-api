@@ -79,7 +79,7 @@ export default class Image extends Model {
     }
 
     const hash = createHash('md5').update(buffer).digest('hex');
-    const path = 'images/' + hash;
+    const path = 'images/' + hash + '.png';
     if (!(await Drive.exists(path))) {
       await Drive.put(path, buffer);
     }
