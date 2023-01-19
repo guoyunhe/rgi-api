@@ -8,13 +8,14 @@ Route.post('login', async ({ auth, request, response }) => {
 
   try {
     const token = await auth.use('api').attempt(email, password);
-    return token;
+    const user = await User.findBy('email', email);
+    return { token, user };
   } catch {
     return response.unauthorized('Invalid credentials');
   }
 });
 
-Route.post('register', async ({ request, response }) => {
+Route.post('register', async ({ auth, request, response }) => {
   const validations = await schema.create({
     username: schema.string({}, [rules.unique({ table: 'users', column: 'username' })]),
     email: schema.string({}, [rules.email(), rules.unique({ table: 'users', column: 'email' })]),
@@ -22,7 +23,8 @@ Route.post('register', async ({ request, response }) => {
   });
   const data = await request.validate({ schema: validations });
   const user = await User.create(data);
-  return response.created(user);
+  const token = await auth.use('api').attempt(data.email, data.password);
+  return response.created({ user, token });
 });
 
 Route.get('user', async ({ auth, response }) => {
