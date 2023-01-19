@@ -29,4 +29,10 @@ Route.resource('series', 'SeriesController').apiOnly();
 Route.resource('titles', 'TitlesController').apiOnly();
 Route.resource('games', 'GamesController').apiOnly();
 Route.resource('roms', 'RomsController').apiOnly();
+Route.resource('images', 'ImagesController')
+  .only(['index', 'store', 'show', 'destroy'])
+  .middleware({
+    store: ['auth'],
+    destroy: ['auth'],
+  });
 Route.resource('users', 'UsersController').apiOnly();
