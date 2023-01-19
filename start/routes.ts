@@ -25,10 +25,6 @@ Route.post('/logout', 'AuthController.logout').middleware('auth');
 Route.post('/register', 'AuthController.register');
 Route.get('/user', 'AuthController.user').middleware('auth');
 
-Route.get('/', async ({ i18n }) => {
-  return { hello: i18n.formatMessage('messages.hello') };
-});
-
 Route.resource('series', 'SeriesController').apiOnly();
 Route.resource('titles', 'TitlesController').apiOnly();
 Route.resource('games', 'GamesController').apiOnly();
