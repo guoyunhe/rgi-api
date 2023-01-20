@@ -19,8 +19,6 @@ import sourceMapSupport from 'source-map-support';
 
 sourceMapSupport.install({ handleUncaughtExceptions: false });
 
-console.log(process.env.HOST);
-
 new Ignitor(__dirname).httpServer().start((handle) => {
   if (process.env.SSL_KEY && process.env.SSL_CERT) {
     return createHttpsServer(
