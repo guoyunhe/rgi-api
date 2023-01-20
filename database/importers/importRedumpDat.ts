@@ -125,7 +125,7 @@ export default async function importRedumpDat(platform: string) {
             type: 'system',
             action: 'rom.import',
             data: {
-              romId: rom.id,
+              romId: romObj.id,
               source: 'redump',
             },
           });
