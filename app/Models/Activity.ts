@@ -7,11 +7,11 @@ export default class Activity extends Model {
   @column()
   public type: 'system' | 'admin' | 'user';
 
-  /** User id of who uploaded the image */
+  /** Action executor ID */
   @column()
   public userId: number | null;
 
-  /** Title that the game belongs to */
+  /** Action executor */
   @belongsTo(() => User)
   public user: BelongsTo<typeof User>;
 

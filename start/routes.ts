@@ -35,4 +35,5 @@ Route.resource('images', 'ImagesController')
     store: ['auth'],
     destroy: ['auth'],
   });
+Route.resource('activities', 'ActivitiesController').apiOnly();
 Route.resource('users', 'UsersController').apiOnly();
