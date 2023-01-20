@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import { rules, schema } from '@ioc:Adonis/Core/Validator';
+import Activity from 'App/Models/Activity';
 import Image from 'App/Models/Image';
 import { rm } from 'fs/promises';
 
@@ -25,11 +26,17 @@ export default class ImagesController {
     });
 
     if (imageFile.tmpPath) {
-      const image = Image.createFromLocalFile(imageFile.tmpPath, {
+      const image = await Image.createFromLocalFile(imageFile.tmpPath, {
         userId: auth.user?.id,
         maxWidth,
         maxHeight,
         type: type as Image['type'],
+      });
+      await Activity.create({
+        type: 'user',
+        userId: auth.user!.id,
+        action: 'image.upload',
+        data: { imageId: image.id },
       });
       // Remove tmp file to save disk space
       rm(imageFile.tmpPath);

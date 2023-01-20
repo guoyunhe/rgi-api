@@ -3,7 +3,7 @@ import Activity from 'App/Models/Activity';
 
 export default class ActivitiesController {
   public async index({ request }: HttpContextContract) {
-    let query = Activity.query();
+    let query = Activity.query().orderBy('createdAt', 'desc');
     if (request.input('type')) {
       query = query.where('type', request.input('type'));
     }

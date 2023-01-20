@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import { rules, schema } from '@ioc:Adonis/Core/Validator';
+import Activity from 'App/Models/Activity';
 import Game from 'App/Models/Game';
 import Image from 'App/Models/Image';
 
@@ -41,7 +42,7 @@ export default class GamesController {
     }
   }
 
-  public async update({ request, response }: HttpContextContract) {
+  public async update({ request, response, auth }: HttpContextContract) {
     const game = await Game.find(request.param('id'));
 
     if (!game) return response.notFound();
@@ -56,6 +57,12 @@ export default class GamesController {
       const image = await Image.find(addImageId);
       if (image) {
         await game.related('images').save(image);
+        await Activity.create({
+          type: 'user',
+          userId: auth.user?.id,
+          action: 'game.addImage',
+          data: { gameId: game.id, imageId: image.id },
+        });
       }
     }
 
