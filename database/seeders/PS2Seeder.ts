@@ -1,5 +1,5 @@
 import BaseSeeder from '@ioc:Adonis/Lucid/Seeder';
-import seedRedumpDat from '../../utils/redump/seedRedump';
+import seedRedumpDat from '../../util/redump/seedRedump';
 
 export default class extends BaseSeeder {
   protected platform = 'PS2';

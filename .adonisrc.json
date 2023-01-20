@@ -30,8 +30,8 @@
         "timeout": 60000
       },
       {
-        "name": "utils",
-        "files": ["utils/**/*.spec(.ts|.js)"],
+        "name": "util",
+        "files": ["util/**/*.spec(.ts|.js)"],
         "timeout": 5000
       }
     ]

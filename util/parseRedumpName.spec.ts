@@ -6,7 +6,8 @@ test('parseRedumpName()', ({ assert }) => {
     title: 'Greatest Striker',
     mainName: 'Greatest Striker (Japan)',
     disc: 1,
-    region: ['Japan'],
+    region: 'Japan',
+    language: undefined,
   });
 
   assert.deepEqual(parseRedumpName('Resident Evil 4 (Europe) (En,Fr,De,Es,It)'), {
@@ -19,9 +20,10 @@ test('parseRedumpName()', ({ assert }) => {
 
   assert.deepEqual(parseRedumpName('Space Channel 5 - Special Edition (USA) (Disc 2)'), {
     title: 'Space Channel 5 - Special Edition',
-    mainName: 'Space Channel 5 - Special Edition (USA) (Disc 2)',
+    mainName: 'Space Channel 5 - Special Edition (USA) (Disc 1)',
     disc: 2,
     region: 'USA',
+    language: undefined,
   });
 
   assert.deepEqual(parseRedumpName('Tomb Raider - The Last Revelation (USA) (Rev 1)'), {
@@ -29,6 +31,7 @@ test('parseRedumpName()', ({ assert }) => {
     mainName: 'Tomb Raider - The Last Revelation (USA)',
     disc: 1,
     region: 'USA',
+    language: undefined,
   });
 
   assert.deepEqual(parseRedumpName('Tekken 3 (Europe) (Alt)'), {
@@ -36,6 +39,7 @@ test('parseRedumpName()', ({ assert }) => {
     mainName: 'Tekken 3 (Europe)',
     disc: 1,
     region: 'Europe',
+    language: undefined,
   });
 
   assert.deepEqual(parseRedumpName('Legend of Dragoon, The (Europe) (Disc 1)'), {
@@ -43,5 +47,6 @@ test('parseRedumpName()', ({ assert }) => {
     mainName: 'Legend of Dragoon, The (Europe) (Disc 1)',
     disc: 1,
     region: 'Europe',
+    language: undefined,
   });
 });

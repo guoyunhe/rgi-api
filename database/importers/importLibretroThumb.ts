@@ -1,9 +1,10 @@
+import Activity from 'App/Models/Activity';
 import Game from 'App/Models/Game';
 import Image from 'App/Models/Image';
 import download from 'download';
 import { existsSync } from 'fs';
 import { readdir } from 'fs/promises';
-import parseRedumpName from '../redump/parseRedumpName';
+import parseRedumpName from 'util/parseRedumpName';
 
 const thumbnailTypes = ['Boxart', 'Snap', 'Title'];
 
@@ -11,7 +12,7 @@ function filterThumbnail(fileName: string) {
   return !fileName.includes('(Demo)') && !fileName.includes('(Beta)');
 }
 
-export default async function fetchLibretroThumbnails(platform: string, repo: string) {
+export default async function importLibretroThumb(platform: string, repo: string) {
   const dist = `tmp/libretro-thumbnail-${platform.toLowerCase()}`;
   if (!existsSync(dist)) {
     await download(
@@ -52,9 +53,18 @@ export default async function fetchLibretroThumbnails(platform: string, repo: st
         }
         if (game) {
           const image = await Image.createFromLocalFile(thumbTypeRoot + '/' + thumb.name, {
-            type: thumbType.toLowerCase(),
+            type: thumbType.toLowerCase() as any,
           });
           await game.related('images').save(image);
+          await Activity.create({
+            type: 'system',
+            action: 'title.import',
+            data: {
+              gameId: game.id,
+              imageId: image.id,
+              source: 'libretro-thumbnails',
+            },
+          });
         } else {
           notMatched++;
           console.log(platform, thumbType, '\x1b[31m', 'NotMatched', '\x1b[0m', thumb.name);
