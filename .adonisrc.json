@@ -31,7 +31,7 @@
       },
       {
         "name": "util",
-        "files": ["util/**/*.spec(.ts|.js)"],
+        "files": ["database/**/*.spec(.ts|.js)"],
         "timeout": 5000
       }
     ]

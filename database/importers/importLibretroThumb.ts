@@ -4,7 +4,7 @@ import Image from 'App/Models/Image';
 import download from 'download';
 import { existsSync } from 'fs';
 import { readdir } from 'fs/promises';
-import parseRedumpName from 'util/parseRedumpName';
+import parseRedumpName from './helpers/parseRedumpName';
 
 const thumbnailTypes = ['Boxart', 'Snap', 'Title'];
 

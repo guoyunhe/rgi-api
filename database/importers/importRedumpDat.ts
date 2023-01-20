@@ -7,8 +7,8 @@ import Activity from 'App/Models/Activity';
 import Game from 'App/Models/Game';
 import Rom from 'App/Models/Rom';
 import Title from 'App/Models/Title';
-import parseRedumpName from 'util/parseRedumpName';
-import parseSerial from 'util/parseSerial';
+import parseRedumpName from './helpers/parseRedumpName';
+import parseSerial from './helpers/parseSerial';
 
 /**
  * Download Redump data
