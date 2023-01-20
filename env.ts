@@ -18,6 +18,8 @@ export default Env.rules({
   HOST: Env.schema.string({ format: 'host' }),
   PORT: Env.schema.number(),
   CORS_ORIGIN: Env.schema.string(),
+  SSL_KEY: Env.schema.string.optional(),
+  SSL_CERT: Env.schema.string.optional(),
   APP_KEY: Env.schema.string(),
   APP_NAME: Env.schema.string(),
   DRIVE_DISK: Env.schema.enum(['local'] as const),

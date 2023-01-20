@@ -11,9 +11,26 @@
 */
 
 import { Ignitor } from '@adonisjs/core/build/standalone';
+import { readFileSync } from 'fs';
+import { createServer as createHttpServer } from 'http';
+import { createServer as createHttpsServer } from 'https';
 import 'reflect-metadata';
 import sourceMapSupport from 'source-map-support';
 
 sourceMapSupport.install({ handleUncaughtExceptions: false });
 
-new Ignitor(__dirname).httpServer().start();
+console.log(process.env.HOST);
+
+new Ignitor(__dirname).httpServer().start((handle) => {
+  if (process.env.SSL_KEY && process.env.SSL_CERT) {
+    return createHttpsServer(
+      {
+        key: readFileSync(process.env.SSL_KEY),
+        cert: readFileSync(process.env.SSL_CERT),
+      },
+      handle
+    );
+  } else {
+    return createHttpServer(handle);
+  }
+});
