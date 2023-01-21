@@ -28,7 +28,7 @@ export default driveConfig({
   | the `DRIVE_DISK` environment variable.
   |
   */
-  disk: Env.get('DRIVE_DISK'),
+  disk: Env.get('DRIVE_DISK', 'local'),
 
   disks: {
     /*
@@ -53,7 +53,7 @@ export default driveConfig({
       | files.
       |
       */
-      root: Application.makePath('storage'),
+      root: Env.get('DRIVE_LOCAL_ROOT', Application.makePath('storage')),
 
       /*
       |--------------------------------------------------------------------------
