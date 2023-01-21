@@ -20,7 +20,7 @@ import sourceMapSupport from 'source-map-support';
 sourceMapSupport.install({ handleUncaughtExceptions: false });
 
 new Ignitor(__dirname).httpServer().start((handle) => {
-  const sslKey = `/etc/letsencrypt/live/rgi-api.guoyunhe.me/privkey.pem`;
+  const sslKey = '/etc/letsencrypt/live/rgi-api.guoyunhe.me/privkey.pem';
   const sslCert = '/etc/letsencrypt/live/rgi-api.guoyunhe.me/fullchain.pem';
   if (existsSync(sslKey) && existsSync(sslCert)) {
     return createHttpsServer(
