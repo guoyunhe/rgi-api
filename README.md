@@ -67,7 +67,7 @@ node ace build --production
 # daemon process manager to keep your app always online
 sudo npm i -g pm2
 sudo pm2 startup
-sudo ENV_PATH=/srv/www/rgi-api/.env pm2 start build/server.js
+sudo ENV_PATH=/srv/www/example.com/.env HOST=example.com pm2 start build/server.js
 sudo pm2 save
 sudo systemctl restart pm2-root
 ```
