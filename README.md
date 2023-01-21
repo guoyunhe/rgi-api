@@ -36,16 +36,52 @@ If remote source code was changed, run above commands again to update your local
 
 ## Production Deployment
 
-System requirements:
+### System requirements
 
-- GNU/Linux
-- Systemd, included in most modern GNU/Linux distributions
+- Modern GNU/Linux with systemd
 - Node.js 16+
-- MySQL/MariaDB/Postgres
-- Python 3
+- MySQL/MariaDB
 - [Certbot](https://certbot.eff.org/)
+- Nginx, optional
 
-Initial deployment (Linux):
+### SSL certificates
+
+First you need to add IPv4(A) and IPv6(AAAA) DNS records of your domain (e.g. api.example.com) and your server IP.
+
+Then in your server, run:
+
+```
+sudo cerbot certonly
+```
+
+Follow the instruction and you should get SSL certificates installed.
+
+### Environment variables
+
+```ini
+# Must be 443 for HTTPS
+PORT=443
+# Comma seperated list of your web apps
+CORS_ORIGIN=https://retrogameindex.netlify.app
+# Run Node.js in production mode
+NODE_ENV=production
+# Use a random key and keep it secret
+APP_KEY=xxxxxxxxxxxxxxxxxxxxxxxx
+# Store files on local disk or Amazon S3
+DRIVE_DISK=local
+# If use local drive, specify absolute path of your storage
+DRIVE_LOCAL_ROOT=/srv/www/rgi-api/storage
+# Database type
+DB_CONNECTION=mysql
+# Database info
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=dbuser
+MYSQL_PASSWORD=dbsecret
+MYSQL_DB_NAME=dbname
+```
+
+### Build and start
 
 ```bash
 # generate https certificates
