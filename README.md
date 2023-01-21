@@ -65,7 +65,7 @@ PORT=443
 CORS_ORIGIN=https://retrogameindex.netlify.app
 # Run Node.js in production mode
 NODE_ENV=production
-# Use a random key and keep it secret
+# Run `node ace generate:key` to get a random key and keep it secret
 APP_KEY=xxxxxxxxxxxxxxxxxxxxxxxx
 # Store files on local disk or Amazon S3
 DRIVE_DISK=local
