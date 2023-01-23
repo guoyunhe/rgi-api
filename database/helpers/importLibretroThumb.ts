@@ -4,7 +4,7 @@ import Image from 'App/Models/Image';
 import { existsSync } from 'fs';
 import { readdir } from 'fs/promises';
 import gitly from 'gitly';
-import parseRedumpName from './helpers/parseRedumpName';
+import parseRedumpName from './parseRedumpName';
 
 const thumbnailTypes = ['Boxart', 'Snap', 'Title'];
 
@@ -13,9 +13,9 @@ function filterThumbnail(fileName: string) {
 }
 
 export default async function importLibretroThumb(platform: string, repo: string) {
-  const dist = `tmp/libretro-thumbnail-${platform.toLowerCase()}`;
+  const dist = `tmp/libretro-thumbnail-${platform}`;
   if (!existsSync(dist)) {
-    await gitly(`libretro-thumbnails/${repo}`, dist);
+    await gitly(`libretro-thumbnails/${repo}`, dist, {});
   }
 
   for (let i = 0; i < thumbnailTypes.length; i++) {

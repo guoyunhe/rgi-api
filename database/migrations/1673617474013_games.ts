@@ -61,7 +61,7 @@ export default class extends BaseSchema {
       table.string('region').nullable();
       table.string('language').nullable();
 
-      table.integer('disc').defaultTo(1);
+      table.integer('disc').nullable();
       table.string('serial').nullable();
       table.string('version').nullable();
 

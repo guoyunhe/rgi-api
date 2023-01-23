@@ -7,8 +7,8 @@ import Activity from 'App/Models/Activity';
 import Game from 'App/Models/Game';
 import Rom from 'App/Models/Rom';
 import Title from 'App/Models/Title';
-import parseRedumpName from './helpers/parseRedumpName';
-import parseSerial from './helpers/parseSerial';
+import parseRedumpName from '../helpers/parseRedumpName';
+import parseSerial from '../helpers/parseSerial';
 
 /**
  * Download Redump data
@@ -18,7 +18,7 @@ import parseSerial from './helpers/parseSerial';
 async function downloadRedumpDat(platform: string) {
   const dist = `tmp/redump-${platform}`;
   await rm(dist, { force: true, recursive: true });
-  await download(`http://redump.org/datfile/${platform}/serial,version,disc`, dist, {
+  await download(`http://redump.org/datfile/${platform}/serial,version`, dist, {
     extract: true,
   });
   const file = (await glob(dist + '/*.dat'))[0];
@@ -35,19 +35,20 @@ async function downloadRedumpDat(platform: string) {
 }
 
 export default async function importRedumpDat(platform: string) {
-  const data = await downloadRedumpDat(platform.toLowerCase());
+  const data = await downloadRedumpDat(platform);
 
   for (let i = 0; i < data.length; i++) {
     const { serial, name, version, rom } = data[i] as any;
     if (!serial) continue;
+    const parsedSerial = parseSerial(platform, serial);
+    if (!parsedSerial) continue;
 
     const { region, language, title, mainName, disc } = parseRedumpName(name);
-    const parsedSerial = parseSerial(platform, serial);
 
     const game = await Game.firstOrNew({
       name,
       serial: parsedSerial,
-      platform: platform.toUpperCase(),
+      platform,
     });
 
     let needSave = !game.id;
@@ -93,7 +94,7 @@ export default async function importRedumpDat(platform: string) {
       const mainGame = await Game.query()
         .where({
           name: mainName,
-          platform: platform.toUpperCase(),
+          platform,
         })
         .first();
       if (mainGame) {
