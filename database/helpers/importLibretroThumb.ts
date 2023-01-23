@@ -2,7 +2,7 @@ import Activity from 'App/Models/Activity';
 import Game from 'App/Models/Game';
 import Image from 'App/Models/Image';
 import { existsSync } from 'fs';
-import { readdir } from 'fs/promises';
+import { readdir, rm } from 'fs/promises';
 import gitly from 'gitly';
 import parseRedumpName from './parseRedumpName';
 
@@ -15,7 +15,8 @@ function filterThumbnail(fileName: string) {
 export default async function importLibretroThumb(platform: string, repo: string) {
   const dist = `tmp/libretro-thumbnail-${platform}`;
   if (!existsSync(dist)) {
-    await gitly(`libretro-thumbnails/${repo}`, dist, {});
+    const [tarPath] = await gitly(`libretro-thumbnails/${repo}`, dist, {});
+    await rm(tarPath);
   }
 
   for (let i = 0; i < thumbnailTypes.length; i++) {
