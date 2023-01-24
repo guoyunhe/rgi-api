@@ -1,5 +1,14 @@
-import axios from 'axios';
-import FormData from 'form-data';
+import Application from '@ioc:Adonis/Core/Application';
+import Activity from 'App/Models/Activity';
+import Game from 'App/Models/Game';
+import Rom from 'App/Models/Rom';
+import Title from 'App/Models/Title';
+import { XMLParser } from 'fast-xml-parser';
+import { readdir, readFile, rm } from 'fs/promises';
+import StreamZip from 'node-stream-zip';
+import { join } from 'path';
+import puppeteer from 'puppeteer';
+import parseRedumpName from './parseRedumpName';
 
 /**
  * To get systemId:
@@ -7,29 +16,157 @@ import FormData from 'form-data';
  * 2. Choose system you want to download
  * 3. Check `s=xx` parameter in browser's address bar
  */
-async function downloadDat(systemId: number) {
-  // Send system id to get download id
-  const formData = new FormData();
-  formData.append('system_selection', String(systemId));
-  formData.append('sys_list_order', '2');
-  formData.append('naming', '0');
-  formData.append('numbered', '0');
-  formData.append('hash', '1');
-  formData.append('fill_parents', '1');
-  formData.append('hdl_xml_', 'Prepare');
-  const res1 = await axios.post(
-    `https://datomatic.no-intro.org/index.php?page=download&op=xml&s=${systemId}`,
-    formData,
-    {
-      maxRedirects: 0, // disable redirect
-      validateStatus: function (status) {
-        return status < 500; // accept 302
-      },
+function downloadDat(platform: string, systemId: number) {
+  return new Promise<string>(async (resolve, reject) => {
+    const downloadPath = Application.tmpPath('nointro-' + platform);
+    await rm(downloadPath, { force: true, recursive: true });
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+    const client = await page.target().createCDPSession();
+    await client.send('Page.setDownloadBehavior', {
+      behavior: 'allow',
+      downloadPath,
+    });
+    await page.goto(`https://datomatic.no-intro.org/index.php?page=download&op=xml&s=${systemId}`);
+    await page.waitForSelector('input[value="Prepare"]');
+    await page.click('input[value="Prepare"]');
+    await page.waitForSelector('input[value="Download"]');
+    await page.click('input[value="Download"]');
+    const timer = setInterval(async () => {
+      const zipFileName = (await readdir(downloadPath)).find((f) => f.endsWith('.zip'));
+      if (zipFileName) {
+        clearInterval(timer);
+        const zipFullPath = join(downloadPath, zipFileName);
+        const zip = new StreamZip.async({ file: zipFullPath });
+        await zip.extract(null, downloadPath);
+        const datFileName = (await readdir(downloadPath)).find((f) => f.endsWith('.dat'));
+        if (datFileName) {
+          await rm(zipFullPath);
+          resolve(join(downloadPath, datFileName));
+        } else {
+          reject(new Error('Fail to extract ' + zipFullPath));
+        }
+      }
+    }, 1000);
+  });
+}
+
+async function parseDat(filePath: string) {
+  const xml = await readFile(filePath, 'utf-8');
+  const parser = new XMLParser({
+    ignoreAttributes: false,
+    attributeNamePrefix: '',
+  });
+  const data = parser.parse(xml);
+  const games = data.datafile.game;
+  return games;
+}
+
+interface RawRom {
+  name: string;
+  size: string;
+  crc: string;
+  md5: string;
+  sha1: string;
+}
+
+interface RawGame {
+  name: string;
+  description: string;
+  rom: RawRom | RawRom[];
+}
+
+async function createGames(platform: string, rawGames: RawGame[]) {
+  for (let i = 0; i < rawGames.length; i++) {
+    const rawGame = rawGames[i] as any;
+    const { name, rom: rawRom } = rawGame;
+    const { region, language, title, mainName } = parseRedumpName(name);
+
+    const game = await Game.firstOrNew({
+      name,
+      platform,
+    });
+
+    let needSave = !game.id;
+
+    if (region && game.region !== region) {
+      game.region = region;
+      needSave = true;
     }
-  );
-  console.log(res1.statusText);
+
+    if (language && game.language !== language) {
+      game.language = language;
+      needSave = true;
+    }
+
+    if (!game.titleId) {
+      const titleObj = await Title.firstOrNew({ name: title });
+      if (!titleObj.id) {
+        await titleObj.save();
+        await Activity.create({
+          type: 'system',
+          targetType: 'title',
+          targetId: titleObj.id,
+          action: 'import',
+          data: {
+            source: 'nointro',
+          },
+        });
+      }
+      game.titleId = titleObj.id;
+      needSave = true;
+    }
+
+    if (!game.mainId && name !== mainName) {
+      const mainGame = await Game.query()
+        .where({
+          name: mainName,
+          platform,
+        })
+        .first();
+      if (mainGame) {
+        game.mainId = mainGame.id;
+        needSave = true;
+      }
+    }
+
+    if (needSave) {
+      await game.save();
+      await Activity.create({
+        type: 'system',
+        targetType: 'game',
+        targetId: game.id,
+        action: 'import',
+        data: {
+          source: 'nointro',
+        },
+      });
+    }
+
+    if (rawRom) {
+      const rawRoms = Array.isArray(rawRom) ? rawRom : [rawRom];
+      for (let j = 0; j < rawRoms.length; j++) {
+        const { name, size, md5, sha1 } = rawRoms[j];
+        const rom = await Rom.firstOrNew({ gameId: game.id, md5, sha1 }, { name, size });
+        if (!rom.id) {
+          await rom.save();
+          await Activity.create({
+            type: 'system',
+            targetType: 'rom',
+            targetId: rom.id,
+            action: 'import',
+            data: {
+              source: 'nointro',
+            },
+          });
+        }
+      }
+    }
+  }
 }
 
 export default async function importNoIntroDat(platform: string, systemId: number) {
-  await downloadDat(systemId);
+  const datFilePath = await downloadDat(platform, systemId);
+  const rawGames = await parseDat(datFilePath);
+  await createGames(platform, rawGames);
 }

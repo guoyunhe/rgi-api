@@ -60,8 +60,10 @@ export default class GamesController {
         await Activity.create({
           type: 'user',
           userId: auth.user?.id,
-          action: 'game.addImage',
-          data: { gameId: game.id, imageId: image.id },
+          targetType: 'game',
+          targetId: game.id,
+          action: 'addImage',
+          data: { imageId: image.id },
         });
       }
     }

@@ -35,8 +35,9 @@ export default class ImagesController {
       await Activity.create({
         type: 'user',
         userId: auth.user!.id,
-        action: 'image.upload',
-        data: { imageId: image.id },
+        targetType: 'image',
+        targetId: image.id,
+        action: 'upload',
       });
       // Remove tmp file to save disk space
       rm(imageFile.tmpPath);

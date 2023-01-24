@@ -7,8 +7,10 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id');
 
-      table.string('type').notNullable();
+      table.string('type').notNullable().index();
       table.integer('user_id').unsigned().nullable().references('users.id').onDelete('SET NULL');
+      table.string('target_type').nullable().index();
+      table.integer('target_id').unsigned().nullable().index();
       table.string('action').notNullable();
       table.json('data').nullable();
 

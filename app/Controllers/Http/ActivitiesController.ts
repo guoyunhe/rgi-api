@@ -12,6 +12,12 @@ export default class ActivitiesController {
     } else {
       query.preload('user');
     }
+    if (request.input('targetType')) {
+      query = query.where('targetType', request.input('targetType'));
+      if (request.input('targetId')) {
+        query = query.where('targetId', request.input('targetId'));
+      }
+    }
     return query.paginate(request.input('page', 1), request.input('perPage', 20));
   }
 }

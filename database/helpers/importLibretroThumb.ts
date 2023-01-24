@@ -52,10 +52,19 @@ export default async function importLibretroThumb(platform: string, repo: string
           await game.related('images').save(image);
           await Activity.create({
             type: 'system',
-            action: 'title.import',
+            targetType: 'image',
+            targetId: image.id,
+            action: 'import',
             data: {
-              gameId: game.id,
-              imageId: image.id,
+              source: 'libretro-thumbnails',
+            },
+          });
+          await Activity.create({
+            type: 'system',
+            targetType: 'game',
+            targetId: game.id,
+            action: 'addImage',
+            data: {
               source: 'libretro-thumbnails',
             },
           });

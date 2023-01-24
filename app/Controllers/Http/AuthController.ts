@@ -41,7 +41,7 @@ export default class GamesController {
     });
     const data = await request.validate({ schema: validations });
     const user = await User.create(data);
-    await Activity.create({ type: 'user', userId: user.id, action: 'user.register' });
+    await Activity.create({ type: 'user', userId: user.id, action: 'register' });
     const token = await auth.use('api').attempt(data.email, data.password);
     return { user, token };
   }

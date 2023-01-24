@@ -15,6 +15,14 @@ export default class Activity extends Model {
   @belongsTo(() => User)
   public user: BelongsTo<typeof User>;
 
+  /** Action target model type */
+  @column()
+  public targetType: string | null;
+
+  /** Action target model ID */
+  @column()
+  public targetId: number | null;
+
   /** Action code, like 'user.register', 'game.favorite', 'game.image.upload' */
   @column()
   public action: string;

@@ -38,7 +38,7 @@ export default async function importRedumpDat(platform: string) {
   const data = await downloadRedumpDat(platform);
 
   for (let i = 0; i < data.length; i++) {
-    const { serial, name, version, rom } = data[i] as any;
+    const { serial, name, version, rom: rawRom } = data[i] as any;
     if (!serial) continue;
     const parsedSerial = parseSerial(platform, serial);
     if (!parsedSerial) continue;
@@ -79,9 +79,9 @@ export default async function importRedumpDat(platform: string) {
         await titleObj.save();
         await Activity.create({
           type: 'system',
-          action: 'title.import',
+          targetType: 'title',
+          targetId: titleObj.id,
           data: {
-            titleId: titleObj.id,
             source: 'redump',
           },
         });
@@ -107,26 +107,28 @@ export default async function importRedumpDat(platform: string) {
       await game.save();
       await Activity.create({
         type: 'system',
-        action: 'game.import',
+        targetType: 'game',
+        targetId: game.id,
+        action: 'import',
         data: {
-          gameId: game.id,
           source: 'redump',
         },
       });
     }
 
-    if (rom) {
-      const roms = Array.isArray(rom) ? rom : [rom];
-      for (let j = 0; j < roms.length; j++) {
-        const { name, size, md5, sha1 } = roms[j];
-        const romObj = await Rom.firstOrNew({ gameId: game.id, md5, sha1 }, { name, size });
-        if (!romObj.id) {
-          await romObj.save();
+    if (rawRom) {
+      const rawRoms = Array.isArray(rawRom) ? rawRom : [rawRom];
+      for (let j = 0; j < rawRoms.length; j++) {
+        const { name, size, md5, sha1 } = rawRoms[j];
+        const rom = await Rom.firstOrNew({ gameId: game.id, md5, sha1 }, { name, size });
+        if (!rom.id) {
+          await rom.save();
           await Activity.create({
             type: 'system',
-            action: 'rom.import',
+            targetType: 'rom',
+            targetId: rom.id,
+            action: 'import',
             data: {
-              romId: romObj.id,
               source: 'redump',
             },
           });
