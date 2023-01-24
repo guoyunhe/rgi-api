@@ -1,9 +1,10 @@
 import Activity from 'App/Models/Activity';
 import Game from 'App/Models/Game';
 import Image from 'App/Models/Image';
-import { existsSync } from 'fs';
-import { readdir, rm } from 'fs/promises';
+import { mkdtemp, readdir, rm } from 'fs/promises';
 import gitly from 'gitly';
+import { tmpdir } from 'os';
+import { join } from 'path';
 import parseRedumpName from './parseRedumpName';
 
 const thumbnailTypes = ['Boxart', 'Snap', 'Title'];
@@ -13,11 +14,9 @@ function filterThumbnail(fileName: string) {
 }
 
 export default async function importLibretroThumb(platform: string, repo: string) {
-  const dist = `tmp/libretro-thumbnail-${platform}`;
-  if (!existsSync(dist)) {
-    const [tarPath] = await gitly(`libretro-thumbnails/${repo}`, dist, {});
-    await rm(tarPath);
-  }
+  const tmpPrefix = join(tmpdir(), `libretro-thumbnail-${platform}-`);
+  const dist = await mkdtemp(tmpPrefix);
+  await gitly(`libretro-thumbnails/${repo}`, dist, { temp: dist });
 
   for (let i = 0; i < thumbnailTypes.length; i++) {
     const thumbType = thumbnailTypes[i];
@@ -84,4 +83,5 @@ export default async function importLibretroThumb(platform: string, repo: string
       ((notMatched / total) * 100).toFixed(2) + '%'
     );
   }
+  await rm(dist, { recursive: true, force: true });
 }
