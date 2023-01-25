@@ -1,5 +1,32 @@
 {
   "commands": {
+    "user:role": {
+      "settings": {
+        "loadApp": true,
+        "stayAlive": false
+      },
+      "commandPath": "./commands/UserRole",
+      "commandName": "user:role",
+      "description": "Set user role",
+      "args": [
+        {
+          "type": "string",
+          "propertyName": "username",
+          "name": "username",
+          "required": true,
+          "description": "Username of the user"
+        },
+        {
+          "type": "string",
+          "propertyName": "role",
+          "name": "role",
+          "required": true,
+          "description": "User role to set"
+        }
+      ],
+      "aliases": [],
+      "flags": []
+    },
     "dump:rcfile": {
       "settings": {},
       "commandPath": "@adonisjs/core/build/commands/DumpRc",
