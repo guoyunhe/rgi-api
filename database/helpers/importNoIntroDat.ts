@@ -62,6 +62,7 @@ async function parseDat(filePath: string) {
     .filter(
       (g: RawGame) =>
         !g.name.includes('(Demo)') &&
+        !g.name.includes('(Demo ') &&
         !g.name.includes('(UNROM)') &&
         !g.name.includes('(Program)') &&
         !g.name.includes('(Beta)')

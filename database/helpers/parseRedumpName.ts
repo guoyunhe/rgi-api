@@ -1,5 +1,5 @@
 const discRegex = /\(Disc ([0-9]+)\)/;
-const revRegex = /\(Rev ([0-9]+)\)/;
+const revRegex = /\(Rev \w+\)/;
 const altRegex = /\(Alt\)/;
 const langRegex = /\(([A-Z][a-z](?:,[A-Z][a-z])*)\)/;
 const allRegions = [
