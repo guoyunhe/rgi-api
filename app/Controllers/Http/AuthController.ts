@@ -29,13 +29,16 @@ export default class GamesController {
       username: schema.string({ trim: true }, [
         rules.alphaNum({ allow: ['underscore'] }),
         rules.unique({ table: 'users', column: 'username', caseInsensitive: true }),
+        rules.maxLength(255),
       ]),
       email: schema.string({ trim: true }, [
         rules.email(),
         rules.unique({ table: 'users', column: 'email', caseInsensitive: true }),
+        rules.maxLength(255),
       ]),
       password: schema.string({ trim: true }, [
         rules.minLength(8),
+        rules.maxLength(32),
         rules.confirmed('passwordConfirm'),
       ]),
     });
