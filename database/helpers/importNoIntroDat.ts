@@ -20,7 +20,7 @@ function downloadDat(platform: string, systemId: number) {
   return new Promise<string>(async (resolve, reject) => {
     const downloadPath = Application.tmpPath('nointro-' + platform);
     await rm(downloadPath, { force: true, recursive: true });
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
     const page = await browser.newPage();
     const client = await page.target().createCDPSession();
     await client.send('Page.setDownloadBehavior', {
