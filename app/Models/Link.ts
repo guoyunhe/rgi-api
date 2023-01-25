@@ -22,4 +22,8 @@ export default class Link extends Model {
   /** Page excerpt */
   @column()
   public excerpt: string | null;
+
+  /** User score */
+  @column()
+  public score: number | null;
 }
