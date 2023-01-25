@@ -58,6 +58,7 @@ export default function parseRedumpName(name: string) {
     .replace(revRegex, '') // remove (Rev 1)
     .replace(altRegex, '') // remove (Alt)
     .replace(discRegex, '(Disc 1)') // change (Disc 2) to (Disc 1)
+    .replace('(Virtual Console)', '') // See https://en.wikipedia.org/wiki/Virtual_Console
     .replace(/\s+/g, ' ') // combine spaces
     .trim();
 
