@@ -6,8 +6,13 @@ export default class extends BaseSchema {
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').primary();
-      table.integer('game_id').unsigned().references('games.id');
-      table.integer('translation_id').unsigned().references('translations.id');
+      table.integer('game_id').unsigned().notNullable().references('games.id').onDelete('CASCADE');
+      table
+        .integer('translation_id')
+        .unsigned()
+        .notNullable()
+        .references('translations.id')
+        .onDelete('CASCADE');
       table.unique(['game_id', 'translation_id']);
       table.timestamp('created_at', { useTz: true });
       table.timestamp('updated_at', { useTz: true });

@@ -1,7 +1,9 @@
 import { BelongsTo, belongsTo, column, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm';
 import Image from './Image';
+import Link from './Link';
 import Model from './Model';
 import Title from './Title';
+import Translation from './Translation';
 
 export default class Game extends Model {
   /** Title ID that the game belongs to */
@@ -51,4 +53,12 @@ export default class Game extends Model {
   /** Boxart, snap screen and title screen images */
   @manyToMany(() => Image)
   public images: ManyToMany<typeof Image>;
+
+  /** External links */
+  @manyToMany(() => Link)
+  public links: ManyToMany<typeof Link>;
+
+  /** Translated attributes */
+  @manyToMany(() => Translation)
+  public translations: ManyToMany<typeof Translation>;
 }
