@@ -1,11 +1,12 @@
 import Drive from '@ioc:Adonis/Core/Drive';
 import Env from '@ioc:Adonis/Core/Env';
-import { column, computed } from '@ioc:Adonis/Lucid/Orm';
+import { BelongsTo, belongsTo, column, computed } from '@ioc:Adonis/Lucid/Orm';
 import { createHash } from 'crypto';
 import { readFile } from 'fs/promises';
 import sizeOf from 'image-size';
 import sharp from 'sharp';
 import Model from './Model';
+import User from './User';
 
 /**
  * Boxart, title and snap images.
@@ -19,9 +20,13 @@ import Model from './Model';
  *   - PS3, PS4, NS: max 1280x720px
  */
 export default class Image extends Model {
-  /** User id of who uploaded the image */
+  /** ID of user who uploaded the image */
   @column()
   public userId: number | null;
+
+  /** User who uploaded the image */
+  @belongsTo(() => User)
+  public user: BelongsTo<typeof User>;
 
   /** Usage type, like avatar, boxart, title, snap */
   @column()

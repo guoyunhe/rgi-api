@@ -48,12 +48,16 @@ class CamelCaseNamingStrategy extends SnakeCaseNamingStrategy {
 
 export default class Model extends BaseModel {
   public static namingStrategy = new CamelCaseNamingStrategy();
+
+  /** ID */
   @column({ isPrimary: true })
   public id: number;
 
+  /** Timestamp of creation */
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;
 
+  /** Timestamp of modification */
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime;
 }
