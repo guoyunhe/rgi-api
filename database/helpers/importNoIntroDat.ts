@@ -58,7 +58,15 @@ async function parseDat(filePath: string) {
     attributeNamePrefix: '',
   });
   const data = parser.parse(xml);
-  const games = data.datafile.game;
+  const games = data.datafile.game
+    .filter(
+      (g: RawGame) =>
+        !g.name.includes('(Demo)') &&
+        !g.name.includes('(UNROM)') &&
+        !g.name.includes('(Program)') &&
+        !g.name.includes('(Beta)')
+    )
+    .sort((a: RawGame, b: RawGame) => a.name.localeCompare(b.name));
   return games;
 }
 
