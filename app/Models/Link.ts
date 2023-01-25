@@ -23,7 +23,7 @@ export default class Link extends Model {
   @column()
   public excerpt: string | null;
 
-  /** Media/user review score, 99/100 will be normalized to 9.9/10 */
+  /** Media or user review score, 99/100 will be normalized to 9.9/10 */
   @column()
   public score: number | null;
 }
