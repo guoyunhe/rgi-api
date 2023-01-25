@@ -81,6 +81,7 @@ export default async function importRedumpDat(platform: string) {
           type: 'system',
           targetType: 'title',
           targetId: titleObj.id,
+          action: 'import',
           data: {
             source: 'redump',
           },
