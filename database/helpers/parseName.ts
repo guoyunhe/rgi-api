@@ -1,4 +1,4 @@
-const discRegex = /\(Disc ([0-9]+)\)/;
+const discRegex = /\(Dis[ck] ([0-9]+)\)/;
 const revRegex = /\(Rev \w+\)/;
 const altRegex = /\(Alt\)/;
 const langRegex = /\(([A-Z][a-z](?:,[A-Z][a-z])*)\)/;

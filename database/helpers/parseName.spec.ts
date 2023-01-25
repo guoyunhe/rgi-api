@@ -1,5 +1,5 @@
 import { test } from '@japa/runner';
-import parseRedumpName from './parseRedumpName';
+import parseRedumpName from './parseName';
 
 test('parseRedumpName()', ({ assert }) => {
   assert.deepEqual(parseRedumpName('Greatest Striker (Japan)'), {

@@ -5,7 +5,7 @@ import { mkdtemp, readdir, rm } from 'fs/promises';
 import gitly from 'gitly';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import parseRedumpName from './parseRedumpName';
+import parseRedumpName from './parseName';
 
 const thumbnailTypes = ['Boxart', 'Snap', 'Title'];
 

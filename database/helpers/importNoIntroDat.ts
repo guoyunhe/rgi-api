@@ -8,7 +8,7 @@ import { readdir, readFile, rm } from 'fs/promises';
 import StreamZip from 'node-stream-zip';
 import { join } from 'path';
 import puppeteer from 'puppeteer';
-import parseRedumpName from './parseRedumpName';
+import parseRedumpName from './parseName';
 
 /**
  * To get systemId:
@@ -89,7 +89,7 @@ async function createGames(platform: string, rawGames: RawGame[]) {
   for (let i = 0; i < rawGames.length; i++) {
     const rawGame = rawGames[i] as any;
     const { name, rom: rawRom } = rawGame;
-    const { region, language, title, mainName } = parseRedumpName(name);
+    const { region, language, title, mainName, disc } = parseRedumpName(name);
 
     const game = await Game.firstOrNew({
       name,
@@ -105,6 +105,11 @@ async function createGames(platform: string, rawGames: RawGame[]) {
 
     if (language && game.language !== language) {
       game.language = language;
+      needSave = true;
+    }
+
+    if (game.disc !== disc) {
+      game.disc = disc;
       needSave = true;
     }
 
