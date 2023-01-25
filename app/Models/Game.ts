@@ -14,11 +14,11 @@ export default class Game extends Model {
   @belongsTo(() => Title)
   public title: BelongsTo<typeof Title>;
 
-  /** Main game ID (Disc 1) that the game (Disc 2,3,...) belongs to */
+  /** ID of main game (Disc 1) that the game (Disc 2,3,..., Rev 2, Rev 3...) belongs to */
   @column()
   public mainId: number | null;
 
-  /** Main game (Disc 1) that the game (Disc 2,3,...) belongs to */
+  /** Main game (Disc 1) that the game (Disc 2,3,..., Rev 2, Rev 3...) belongs to */
   @belongsTo(() => Game)
   public main: BelongsTo<typeof Game>;
 
