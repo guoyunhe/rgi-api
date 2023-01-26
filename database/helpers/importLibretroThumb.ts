@@ -5,7 +5,7 @@ import { mkdtemp, readdir, rm } from 'fs/promises';
 import gitly from 'gitly';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import parseRedumpName from './parseName';
+import parseName from './parseName';
 
 const thumbnailTypes = ['Boxart', 'Snap', 'Title'];
 
@@ -34,7 +34,7 @@ export default async function importLibretroThumb(platform: string, repo: string
           .substring(0, thumb.name.length - 4)
           .replaceAll(/\s+/g, ' ')
           .replaceAll('_', '&');
-        const { mainName } = parseRedumpName(name);
+        const { mainName } = parseName(name);
         let game = await Game.query().where({ name: mainName, platform }).first();
         if (!game) {
           game = await Game.query()

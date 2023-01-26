@@ -1,8 +1,8 @@
 import { test } from '@japa/runner';
-import parseRedumpName from './parseName';
+import parseName from './parseName';
 
-test('parseRedumpName()', ({ assert }) => {
-  assert.deepEqual(parseRedumpName('Greatest Striker (Japan)'), {
+test('parseName()', ({ assert }) => {
+  assert.deepEqual(parseName('Greatest Striker (Japan)'), {
     title: 'Greatest Striker',
     mainName: 'Greatest Striker (Japan)',
     disc: 1,
@@ -10,7 +10,7 @@ test('parseRedumpName()', ({ assert }) => {
     language: undefined,
   });
 
-  assert.deepEqual(parseRedumpName('Resident Evil 4 (Europe) (En,Fr,De,Es,It)'), {
+  assert.deepEqual(parseName('Resident Evil 4 (Europe) (En,Fr,De,Es,It)'), {
     title: 'Resident Evil 4',
     mainName: 'Resident Evil 4 (Europe) (En,Fr,De,Es,It)',
     disc: 1,
@@ -18,7 +18,7 @@ test('parseRedumpName()', ({ assert }) => {
     language: 'En,Fr,De,Es,It',
   });
 
-  assert.deepEqual(parseRedumpName('Space Channel 5 - Special Edition (USA) (Disc 2)'), {
+  assert.deepEqual(parseName('Space Channel 5 - Special Edition (USA) (Disc 2)'), {
     title: 'Space Channel 5 - Special Edition',
     mainName: 'Space Channel 5 - Special Edition (USA) (Disc 1)',
     disc: 2,
@@ -26,7 +26,7 @@ test('parseRedumpName()', ({ assert }) => {
     language: undefined,
   });
 
-  assert.deepEqual(parseRedumpName('Tomb Raider - The Last Revelation (USA) (Rev 1)'), {
+  assert.deepEqual(parseName('Tomb Raider - The Last Revelation (USA) (Rev 1)'), {
     title: 'Tomb Raider - The Last Revelation',
     mainName: 'Tomb Raider - The Last Revelation (USA)',
     disc: 1,
@@ -34,7 +34,7 @@ test('parseRedumpName()', ({ assert }) => {
     language: undefined,
   });
 
-  assert.deepEqual(parseRedumpName('Tekken 3 (Europe) (Alt)'), {
+  assert.deepEqual(parseName('Tekken 3 (Europe) (Alt)'), {
     title: 'Tekken 3',
     mainName: 'Tekken 3 (Europe)',
     disc: 1,
@@ -42,7 +42,7 @@ test('parseRedumpName()', ({ assert }) => {
     language: undefined,
   });
 
-  assert.deepEqual(parseRedumpName('Legend of Dragoon, The (Europe) (Disc 1)'), {
+  assert.deepEqual(parseName('Legend of Dragoon, The (Europe) (Disc 1)'), {
     title: 'The Legend of Dragoon',
     mainName: 'Legend of Dragoon, The (Europe) (Disc 1)',
     disc: 1,

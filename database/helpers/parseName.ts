@@ -46,7 +46,7 @@ const regionRegex = new RegExp(`\\(((?:${allRegions.join('|')}|, )+)\\)`);
  *
  * Sims 2, The -> The Sims 2
  */
-export default function parseRedumpName(name: string) {
+export default function parseName(name: string) {
   const regionMatch = name.match(regionRegex);
   const region = regionMatch?.[1];
   const langMatch = name.match(langRegex);

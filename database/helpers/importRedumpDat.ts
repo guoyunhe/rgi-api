@@ -7,7 +7,7 @@ import Activity from 'App/Models/Activity';
 import Game from 'App/Models/Game';
 import Rom from 'App/Models/Rom';
 import Title from 'App/Models/Title';
-import parseRedumpName from './parseName';
+import parseName from './parseName';
 import parseSerial from './parseSerial';
 
 /**
@@ -43,7 +43,7 @@ export default async function importRedumpDat(platform: string) {
     const parsedSerial = parseSerial(platform, serial);
     if (!parsedSerial) continue;
 
-    const { region, language, title, mainName, disc } = parseRedumpName(name);
+    const { region, language, title, mainName, disc } = parseName(name);
 
     const game = await Game.firstOrNew({
       name,
