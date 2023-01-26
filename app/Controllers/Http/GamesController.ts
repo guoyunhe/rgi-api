@@ -6,29 +6,45 @@ import Image from 'App/Models/Image';
 
 export default class GamesController {
   public async index({ request }: HttpContextContract) {
+    const { noBoxartImage, noSnapImage, noTitleImage, page, perPage, platform } =
+      await request.validate({
+        schema: schema.create({
+          noBoxartImage: schema.boolean.optional(),
+          noSnapImage: schema.boolean.optional(),
+          noTitleImage: schema.boolean.optional(),
+          page: schema.number.optional(),
+          perPage: schema.number.optional([rules.range(5, 100)]),
+          platform: schema.string.optional(),
+        }),
+      });
+
     let query = Game.query();
     query = query.whereNull('mainId');
     query = query.preload('images');
 
-    if (request.input('noBoxartImage') === '1') {
+    if (platform) {
+      query = query.where('platform', platform);
+    }
+
+    if (noBoxartImage) {
       query = query.whereDoesntHave('images', (q) => {
         q.where('type', 'boxart');
       });
     }
 
-    if (request.input('noSnapImage') === '1') {
+    if (noSnapImage) {
       query = query.whereDoesntHave('images', (q) => {
         q.where('type', 'snap');
       });
     }
 
-    if (request.input('noTitleImage') === '1') {
+    if (noTitleImage) {
       query = query.whereDoesntHave('images', (q) => {
         q.where('type', 'title');
       });
     }
 
-    return query.paginate(request.input('page', 1), request.input('perPage', 12));
+    return query.paginate(page || 1, perPage);
   }
 
   public async show({ request, response }: HttpContextContract) {
