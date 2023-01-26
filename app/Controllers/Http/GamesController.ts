@@ -20,7 +20,7 @@ export default class GamesController {
 
     let query = Game.query();
     query = query.whereNull('mainId');
-    query = query.preload('images');
+    query = query.preload('images').preload('subs');
 
     if (platform) {
       query = query.where('platform', platform);

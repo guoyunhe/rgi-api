@@ -1,4 +1,12 @@
-import { BelongsTo, belongsTo, column, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm';
+import {
+  BelongsTo,
+  belongsTo,
+  column,
+  HasMany,
+  hasMany,
+  manyToMany,
+  ManyToMany,
+} from '@ioc:Adonis/Lucid/Orm';
 import Image from './Image';
 import Link from './Link';
 import Model from './Model';
@@ -21,6 +29,10 @@ export default class Game extends Model {
   /** Main game (Disc 1) that the game (Disc 2,3,..., Rev 2, Rev 3...) belongs to */
   @belongsTo(() => Game)
   public main: BelongsTo<typeof Game>;
+
+  /** If this is the main game (Disc 1), load sub games (Disc 2,3,..., Rev 2, Rev 3...) */
+  @hasMany(() => Game, { foreignKey: 'mainId' })
+  public subs: HasMany<typeof Game>;
 
   /** Name in English */
   @column()
