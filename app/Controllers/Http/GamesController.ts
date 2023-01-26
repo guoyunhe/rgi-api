@@ -10,19 +10,19 @@ export default class GamesController {
     query = query.whereNull('mainId');
     query = query.preload('images');
 
-    if (request.input('noBoxartImage')) {
+    if (request.input('noBoxartImage') === '1') {
       query = query.whereDoesntHave('images', (q) => {
         q.where('type', 'boxart');
       });
     }
 
-    if (request.input('noSnapImage')) {
+    if (request.input('noSnapImage') === '1') {
       query = query.whereDoesntHave('images', (q) => {
         q.where('type', 'snap');
       });
     }
 
-    if (request.input('noTitleImage')) {
+    if (request.input('noTitleImage') === '1') {
       query = query.whereDoesntHave('images', (q) => {
         q.where('type', 'title');
       });
