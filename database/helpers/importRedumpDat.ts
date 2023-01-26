@@ -10,35 +10,57 @@ import Title from 'App/Models/Title';
 import parseName from './parseName';
 import parseSerial from './parseSerial';
 
+interface RawRom {
+  name: string;
+  size: string;
+  crc: string;
+  md5: string;
+  sha1: string;
+}
+
+interface RawGame {
+  name: string;
+  category: string;
+  description: string;
+  rom: RawRom | RawRom[];
+}
+
 /**
  * Download Redump data
  * @see http://wiki.redump.org/index.php?title=Redump_Search_Parameters
  * @see https://github.com/RobLoach/libretro-dats/blob/master/download.js
  */
-async function downloadRedumpDat(platform: string) {
+async function downloadDat(platform: string) {
   const dist = `tmp/redump-${platform}`;
   await rm(dist, { force: true, recursive: true });
   await download(`http://redump.org/datfile/${platform}/serial,version`, dist, {
     extract: true,
   });
-  const file = (await glob(dist + '/*.dat'))[0];
-  const xml = await readFile(file, 'utf-8');
+  return (await glob(dist + '/*.dat'))[0];
+}
+
+/**
+ * Read and parse XML. Filter and sort games.
+ */
+async function parseDat(filePath: string) {
+  const xml = await readFile(filePath, 'utf-8');
   const parser = new XMLParser({
     ignoreAttributes: false,
     attributeNamePrefix: '',
   });
   const data = parser.parse(xml);
   const games = data.datafile.game
-    .filter((item: any) => item.category === 'Games')
+    .filter((item: RawGame) => item.category === 'Games')
     .sort((a: any, b: any) => a.name.localeCompare(b.name));
   return games;
 }
 
-export default async function importRedumpDat(platform: string) {
-  const data = await downloadRedumpDat(platform);
-
-  for (let i = 0; i < data.length; i++) {
-    const { serial, name, version, rom: rawRom } = data[i] as any;
+/**
+ * Save games and roms in database.
+ */
+async function createGames(platform: string, rawGames: RawGame[]) {
+  for (let i = 0; i < rawGames.length; i++) {
+    const { serial, name, version, rom: rawRom } = rawGames[i] as any;
     if (!serial) continue;
     const parsedSerial = parseSerial(platform, serial);
     if (!parsedSerial) continue;
@@ -137,4 +159,10 @@ export default async function importRedumpDat(platform: string) {
       }
     }
   }
+}
+
+export default async function importRedumpDat(platform: string) {
+  const filePath = await downloadDat(platform);
+  const data = await parseDat(filePath);
+  await createGames(platform, data);
 }

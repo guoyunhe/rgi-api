@@ -10,7 +10,23 @@ import { join } from 'path';
 import puppeteer from 'puppeteer';
 import parseName from './parseName';
 
+interface RawRom {
+  name: string;
+  size: string;
+  crc: string;
+  md5: string;
+  sha1: string;
+}
+
+interface RawGame {
+  name: string;
+  description: string;
+  rom: RawRom | RawRom[];
+}
+
 /**
+ * Download No-Intro data
+ *
  * To get systemId:
  * 1. Go to https://datomatic.no-intro.org/index.php?page=download&op=xml
  * 2. Choose system you want to download
@@ -51,6 +67,9 @@ function downloadDat(platform: string, systemId: number) {
   });
 }
 
+/**
+ * Read and parse XML. Filter and sort games.
+ */
 async function parseDat(filePath: string) {
   const xml = await readFile(filePath, 'utf-8');
   const parser = new XMLParser({
@@ -72,20 +91,9 @@ async function parseDat(filePath: string) {
   return games;
 }
 
-interface RawRom {
-  name: string;
-  size: string;
-  crc: string;
-  md5: string;
-  sha1: string;
-}
-
-interface RawGame {
-  name: string;
-  description: string;
-  rom: RawRom | RawRom[];
-}
-
+/**
+ * Save games and roms in database.
+ */
 async function createGames(platform: string, rawGames: RawGame[]) {
   for (let i = 0; i < rawGames.length; i++) {
     const rawGame = rawGames[i] as any;
