@@ -10,7 +10,7 @@ import parseName from './parseName';
 const thumbnailTypes = ['Boxart', 'Snap', 'Title'];
 
 function filterThumbnail(fileName: string) {
-  return !fileName.includes('(Demo)') && !fileName.includes('(Beta)');
+  return fileName.endsWith('.png') && !fileName.includes('(Demo)') && !fileName.includes('(Beta)');
 }
 
 export default async function importLibretroThumb(platform: string, repo: string) {
