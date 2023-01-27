@@ -51,8 +51,7 @@ export default class Image extends Model {
   /** Image public url */
   @computed()
   public get url() {
-    // return Drive.getUrl(this.path);
-    return `//${Env.get('HOST')}:${Env.get('PORT')}/storage/${this.path}`;
+    return `${Env.get('APP_URL')}/storage/${this.path}`;
   }
 
   public static async createFromLocalFile(
