@@ -41,32 +41,50 @@ If remote source code was changed, run above commands again to update your local
 - Modern GNU/Linux with systemd
 - Node.js 16+
 - MySQL/MariaDB
-- [Certbot](https://certbot.eff.org/)
-- Nginx, optional
+- Certbot
+- NGINX
 
-### SSL certificates
+Read [Setup openSUSE VPS](https://en.opensuse.org/Setup_openSUSE_VPS)
 
-First you need to add IPv4(A) and IPv6(AAAA) DNS records of your domain (e.g. api.example.com) and your server IP.
-
-Then in your server, run:
+### NGINX configuration
 
 ```
-sudo cerbot certonly
-```
+server {
+  listen 80;
+  listen [::]:80;
+  server_name example.com;
 
-Follow the instruction and you should get SSL certificates installed.
+  client_max_body_size 20M;
+
+  location / {
+    proxy_pass http://localhost:3333;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_cache_bypass $http_upgrade;
+  }
+}
+```
 
 ### Environment variables
 
 ```ini
-# Must be 443 for HTTPS
-PORT=443
+# Must match NGINX proxy_pass
+PORT=3333
 # Comma seperated list of your web apps
-CORS_ORIGIN=https://retrogameindex.netlify.app
+CORS_ORIGIN=https://example.com,https://www.example.com
 # Run Node.js in production mode
 NODE_ENV=production
 # Run `node ace generate:key` to get a random key and keep it secret
 APP_KEY=xxxxxxxxxxxxxxxxxxxxxxxx
+# Name your app
+APP_NAME=MyApp
+# The public URL forwarded by NGINX proxy
+APP_URL=https://api.example.com
 # Store files on local disk or Amazon S3
 DRIVE_DISK=local
 # If use local drive, specify absolute path of your storage
