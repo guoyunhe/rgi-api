@@ -29,7 +29,7 @@ node ace migration:run
 node ace db:seed
 
 # start server with auto-reload
-node ace serve --watch
+npm run dev
 ```
 
 If remote source code was changed, run above commands again to update your local project.
@@ -99,16 +99,9 @@ MYSQL_PASSWORD=dbsecret
 MYSQL_DB_NAME=dbname
 ```
 
-### Build and start
+### Build and migrate database
 
 ```bash
-# generate https certificates
-sudo certbot certonly
-
-# configure environment variables
-cp .env.example .env
-vi .env
-
 # install dependencies
 npm install
 
@@ -116,30 +109,23 @@ npm install
 node ace migration:run
 
 # build the server
-node ace build --production
-
-# daemon process manager to keep your app always online
-sudo npm i -g pm2
-sudo pm2 startup
-sudo ENV_PATH=/srv/www/example.com/.env HOST=example.com pm2 start build/server.js
-sudo pm2 save
-sudo systemctl restart pm2-root
+npm run build
 ```
 
-Regular update:
+### Start the server
 
 ```bash
-# install dependencies
-npm install
+# install daemon process manager to keep your app always online
+sudo npm i -g pm2
+# start app
+pm2 start pm2.config.js
+# save app config
+pm2 save
+# save systemd service for auto-start on system boot
+pm2 startup
 
-# migrate database structure
-node ace migration:run
-
-# build the server
-node ace build --production
-
-# restart daemon process
-sudo systemctl restart pm2-root
+# restart daemon process after
+pm2 restart all
 ```
 
 ## Internationalization
