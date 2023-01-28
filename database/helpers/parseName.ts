@@ -40,10 +40,21 @@ const allRegions = [
   'UK',
   'USA',
   'United Arab Emirates',
+  'United Kingdom',
+  'Unknown',
   'World',
 ];
 
 const regionRegex = new RegExp(`\\(((?:${allRegions.join('|')}|, )+)\\)`);
+
+function remapRegion(region?: string) {
+  switch (region) {
+    case 'United Kingdom':
+      return 'UK';
+    default:
+      return region;
+  }
+}
 
 /**
  * Parse Redump game name and get region, language, disc number and regular game title.
@@ -57,7 +68,7 @@ export default function parseName(name: string) {
     console.log('No region found in', name);
   }
 
-  const region = regionMatch?.[1];
+  const region = remapRegion(regionMatch?.[1]);
   const langMatch = name.match(langRegex);
   const language = langMatch?.[1];
   const discMatch = name.match(discRegex);
@@ -99,7 +110,7 @@ export default function parseName(name: string) {
   let displayName = title;
 
   if (regionMatch) {
-    displayName = title + ' ' + regionMatch[0];
+    displayName = `${title} (${region})`;
   }
 
   return {
