@@ -22,21 +22,34 @@ export default class Game extends Model {
   @belongsTo(() => Title)
   public title: BelongsTo<typeof Title>;
 
-  /** ID of main game (Disc 1) that the game (Disc 2,3,..., Rev 2, Rev 3...) belongs to */
+  /**
+   * ID of main game
+   * Sub-games usually contains (Disc 2), (Rev 3), etc.
+   */
   @column()
   public mainId: number | null;
 
-  /** Main game (Disc 1) that the game (Disc 2,3,..., Rev 2, Rev 3...) belongs to */
+  /**
+   * Main game
+   * Sub-games usually contains (Disc 2), (Rev 3), etc.
+   */
   @belongsTo(() => Game)
   public main: BelongsTo<typeof Game>;
 
-  /** If this is the main game (Disc 1), load sub games (Disc 2,3,..., Rev 2, Rev 3...) */
+  /**
+   * Sub games
+   * Sub-games usually contains (Disc 2), (Rev 3), etc.
+   */
   @hasMany(() => Game, { foreignKey: 'mainId' })
   public subs: HasMany<typeof Game>;
 
-  /** Name in English */
+  /** Original name from Redump/No-Intro */
   @column()
   public name: string;
+
+  /** Refined name for displaying in website */
+  @column()
+  public displayName: string;
 
   /** Like GBA (GameBoy Advanced), PS2 (PlayStation 2), NS (Nintendo Switch) */
   @column()
@@ -49,10 +62,6 @@ export default class Game extends Model {
   /** Like En, Fr, Pt */
   @column()
   public language: string | null;
-
-  /** Disc 1, Disc 2, etc. */
-  @column()
-  public disc: number;
 
   /** Serial of game disc or cartridge, not available for old platform and indie games */
   @column()

@@ -2,7 +2,7 @@
   "include": ["**/*"],
   "exclude": ["node_modules", "build"],
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES2021",
     "module": "commonjs",
     "lib": ["ESNext"],
     "noUnusedLocals": true,

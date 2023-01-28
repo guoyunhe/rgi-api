@@ -23,45 +23,12 @@ export default class extends BaseSchema {
         .inTable('games')
         .onDelete('SET NULL');
 
-      table
-        .integer('boxart_image_id')
-        .unsigned()
-        .nullable()
-        .references('id')
-        .inTable('images')
-        .onDelete('SET NULL');
-
-      table
-        .integer('title_image_id')
-        .unsigned()
-        .nullable()
-        .references('id')
-        .inTable('images')
-        .onDelete('SET NULL');
-
-      table
-        .integer('snap_image_id')
-        .unsigned()
-        .nullable()
-        .references('id')
-        .inTable('images')
-        .onDelete('SET NULL');
-
-      table
-        .integer('boxart_id')
-        .unsigned()
-        .nullable()
-        .references('id')
-        .inTable('images')
-        .onDelete('SET NULL');
-
       table.string('name');
-
+      table.string('display_name');
       table.string('platform').notNullable();
       table.string('region').nullable();
       table.string('language').nullable();
 
-      table.integer('disc').nullable();
       table.string('serial').nullable();
       table.string('version').nullable();
 

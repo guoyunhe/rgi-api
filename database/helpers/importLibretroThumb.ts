@@ -71,7 +71,7 @@ export default async function importLibretroThumb(platform: string, repo: string
         });
       } else {
         notMatched++;
-        console.log(platform, thumbType, '\x1b[31m', 'NotMatched', '\x1b[0m', thumb.name);
+        console.log(platform, thumbType, '\x1b[31m', 'NotMatched', '\x1b[0m', thumb);
       }
     }
     console.log(

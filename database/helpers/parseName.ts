@@ -37,6 +37,7 @@ const allRegions = [
   'Taiwan',
   'UK',
   'USA',
+  'World',
 ];
 
 const regionRegex = new RegExp(`\\(((?:${allRegions.join('|')}|, )+)\\)`);
@@ -48,6 +49,11 @@ const regionRegex = new RegExp(`\\(((?:${allRegions.join('|')}|, )+)\\)`);
  */
 export default function parseName(name: string) {
   const regionMatch = name.match(regionRegex);
+
+  if (!regionMatch) {
+    console.log('No region found in', name);
+  }
+
   const region = regionMatch?.[1];
   const langMatch = name.match(langRegex);
   const language = langMatch?.[1];
@@ -87,8 +93,15 @@ export default function parseName(name: string) {
 
   title = title.trim();
 
+  let displayName = title;
+
+  if (regionMatch) {
+    displayName = title + ' ' + regionMatch[0];
+  }
+
   return {
     title,
+    displayName,
     mainName,
     disc,
     region,
