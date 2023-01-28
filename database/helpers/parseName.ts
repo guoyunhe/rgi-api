@@ -19,6 +19,7 @@ const allRegions = [
   'Greece',
   'India',
   'Ireland',
+  'Israel',
   'Italy',
   'Japan',
   'Korea',
@@ -35,8 +36,10 @@ const allRegions = [
   'Sweden',
   'Switzerland',
   'Taiwan',
+  'Turkey',
   'UK',
   'USA',
+  'United Arab Emirates',
   'World',
 ];
 
