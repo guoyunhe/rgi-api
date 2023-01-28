@@ -31,7 +31,7 @@ async function parseDat(filePath: string) {
   });
   const data = parser.parse(xml);
   const games = (data.datafile.game as RawGame[])
-    .filter((item) => item.category === 'Games')
+    .filter((item) => item.category === 'Games' || item.category === 'Add-Ons')
     .sort((a, b) => a.name.localeCompare(b.name));
   return games;
 }
