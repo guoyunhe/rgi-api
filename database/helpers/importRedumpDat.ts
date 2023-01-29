@@ -1,4 +1,4 @@
-import download from 'download';
+import { download } from '@guoyunhe/downloader';
 import glob from 'fast-glob';
 import { XMLParser } from 'fast-xml-parser';
 import { readFile, rm } from 'fs/promises';
