@@ -1,8 +1,8 @@
+import { download } from '@guoyunhe/downloader';
 import Activity from 'App/Models/Activity';
 import Game from 'App/Models/Game';
 import Image from 'App/Models/Image';
 import { mkdtemp, readdir, rm } from 'fs/promises';
-import gitly from 'gitly';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import parseName from './parseName';
@@ -16,7 +16,11 @@ function filterThumbnail(fileName: string) {
 export default async function importLibretroThumb(platform: string, repo: string) {
   const tmpPrefix = join(tmpdir(), `libretro-thumbnail-${platform}-`);
   const dist = await mkdtemp(tmpPrefix);
-  await gitly(`libretro-thumbnails/${repo}`, dist, { temp: dist });
+  await download(
+    `https://github.com//libretro-thumbnails/${repo}/archive/refs/heads/master.tar.gz`,
+    dist,
+    { strip: 1, extract: true }
+  );
 
   for (let i = 0; i < thumbnailTypes.length; i++) {
     const thumbType = thumbnailTypes[i];

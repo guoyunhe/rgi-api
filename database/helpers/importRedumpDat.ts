@@ -1,8 +1,9 @@
 import { download } from '@guoyunhe/downloader';
 import glob from 'fast-glob';
 import { XMLParser } from 'fast-xml-parser';
-import { readFile, rm } from 'fs/promises';
-
+import { mkdtemp, readFile } from 'fs/promises';
+import { tmpdir } from 'os';
+import { join } from 'path';
 import createGames from './createGames';
 import { RawGame } from './types';
 
@@ -12,8 +13,8 @@ import { RawGame } from './types';
  * @see https://github.com/RobLoach/libretro-dats/blob/master/download.js
  */
 async function downloadDat(platform: string) {
-  const dist = `tmp/redump-${platform}`;
-  await rm(dist, { force: true, recursive: true });
+  const tmpPrefix = join(tmpdir(), `redump-${platform}-`);
+  const dist = await mkdtemp(tmpPrefix);
   await download(`http://redump.org/datfile/${platform}/serial,version`, dist, {
     extract: true,
   });
