@@ -3,7 +3,7 @@ import { XMLParser } from 'fast-xml-parser';
 import { readdir, readFile, rm } from 'fs/promises';
 import StreamZip from 'node-stream-zip';
 import { join } from 'path';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import createGames from './createGames';
 import { RawGame } from './types';
 
@@ -19,7 +19,7 @@ function downloadDat(platform: string, systemId: number) {
   return new Promise<string>(async (resolve, reject) => {
     const downloadPath = Application.tmpPath('nointro-' + platform);
     await rm(downloadPath, { force: true, recursive: true });
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({ executablePath: '/usr/bin/chromium', headless: true });
     const page = await browser.newPage();
     const client = await page.target().createCDPSession();
     await client.send('Page.setDownloadBehavior', {
