@@ -1,5 +1,6 @@
 import Activity from 'App/Models/Activity';
 import Game from 'App/Models/Game';
+import Platform from 'App/Models/Platform';
 import Rom from 'App/Models/Rom';
 import Title from 'App/Models/Title';
 import parseName from './parseName';
@@ -8,7 +9,7 @@ import { RawGame } from './types';
 /**
  * Save games and roms in database.
  */
-export default async function createGames(platform: string, rawGames: RawGame[], source: string) {
+export default async function createGames(platform: Platform, rawGames: RawGame[], source: string) {
   for (let i = 0; i < rawGames.length; i++) {
     const { serial, name, version, rom: rawRom } = rawGames[i] as any;
 
@@ -17,7 +18,7 @@ export default async function createGames(platform: string, rawGames: RawGame[],
     const game = await Game.firstOrNew(
       {
         name,
-        platform,
+        platformId: platform.id,
       },
       {
         displayName,
@@ -67,7 +68,7 @@ export default async function createGames(platform: string, rawGames: RawGame[],
       const mainGame = await Game.query()
         .where({
           name: mainName,
-          platform,
+          platformId: platform.id,
         })
         .first();
       if (mainGame) {

@@ -1,4 +1,5 @@
 import Application from '@ioc:Adonis/Core/Application';
+import Platform from 'App/Models/Platform';
 import { XMLParser } from 'fast-xml-parser';
 import { readdir, readFile, rm } from 'fs/promises';
 import StreamZip from 'node-stream-zip';
@@ -15,9 +16,9 @@ import { RawGame } from './types';
  * 2. Choose system you want to download
  * 3. Check `s=xx` parameter in browser's address bar
  */
-function downloadDat(platform: string, systemId: number) {
+function downloadDat(platform: Platform, systemId: number) {
   return new Promise<string>(async (resolve, reject) => {
-    const downloadPath = Application.tmpPath('nointro-' + platform);
+    const downloadPath = Application.tmpPath('nointro-' + platform.code);
     await rm(downloadPath, { force: true, recursive: true });
     const browser = await puppeteer.launch({ executablePath: '/usr/bin/chromium', headless: true });
     const page = await browser.newPage();
@@ -74,7 +75,7 @@ async function parseDat(filePath: string) {
   return games;
 }
 
-export default async function importNoIntroDat(platform: string, systemId: number) {
+export default async function importNoIntroDat(platform: Platform, systemId: number) {
   const datFilePath = await downloadDat(platform, systemId);
   const rawGames = await parseDat(datFilePath);
   await createGames(platform, rawGames, 'nointro');

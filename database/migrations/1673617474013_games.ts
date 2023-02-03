@@ -23,9 +23,15 @@ export default class extends BaseSchema {
         .inTable('games')
         .onDelete('SET NULL');
 
+      table
+        .integer('platform_id')
+        .unsigned()
+        .notNullable()
+        .references('platforms.id')
+        .onDelete('CASCADE');
+
       table.string('name');
       table.string('display_name');
-      table.string('platform').notNullable();
       table.string('region').nullable();
       table.string('language').nullable();
 

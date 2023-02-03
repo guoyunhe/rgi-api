@@ -23,7 +23,7 @@ export default class GamesController {
     query = query.preload('images').preload('subs');
 
     if (platform) {
-      query = query.where('platform', platform);
+      query = query.where('platformId', platform);
     }
 
     if (noBoxartImage) {

@@ -10,6 +10,7 @@ import {
 import Image from './Image';
 import Link from './Link';
 import Model from './Model';
+import Platform from './Platform';
 import Title from './Title';
 import Translation from './Translation';
 
@@ -43,6 +44,14 @@ export default class Game extends Model {
   @hasMany(() => Game, { foreignKey: 'mainId' })
   public subs: HasMany<typeof Game>;
 
+  /** Like GBA (GameBoy Advanced), PS2 (PlayStation 2), NS (Nintendo Switch) */
+  @column()
+  public platformId: number;
+
+  /** Like GBA (GameBoy Advanced), PS2 (PlayStation 2), NS (Nintendo Switch) */
+  @belongsTo(() => Platform)
+  public platform: BelongsTo<typeof Platform>;
+
   /** Original name from Redump/No-Intro */
   @column()
   public name: string;
@@ -50,10 +59,6 @@ export default class Game extends Model {
   /** Refined name for displaying in website */
   @column()
   public displayName: string;
-
-  /** Like GBA (GameBoy Advanced), PS2 (PlayStation 2), NS (Nintendo Switch) */
-  @column()
-  public platform: string;
 
   /** Like Japan, USA, Europe */
   @column()

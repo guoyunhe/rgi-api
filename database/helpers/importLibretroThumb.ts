@@ -2,6 +2,7 @@ import { download } from '@guoyunhe/downloader';
 import Activity from 'App/Models/Activity';
 import Game from 'App/Models/Game';
 import Image from 'App/Models/Image';
+import Platform from 'App/Models/Platform';
 import { mkdtemp, readdir, rm } from 'fs/promises';
 import { tmpdir } from 'os';
 import { join } from 'path';
@@ -13,8 +14,8 @@ function filterThumbnail(fileName: string) {
   return fileName.endsWith('.png') && !fileName.includes('(Demo)') && !fileName.includes('(Beta)');
 }
 
-export default async function importLibretroThumb(platform: string, repo: string) {
-  const tmpPrefix = join(tmpdir(), `libretro-thumbnail-${platform}-`);
+export default async function importLibretroThumb(platform: Platform, repo: string) {
+  const tmpPrefix = join(tmpdir(), `libretro-thumbnail-${platform.code}-`);
   const dist = await mkdtemp(tmpPrefix);
   await download(
     `https://github.com//libretro-thumbnails/${repo}/archive/refs/heads/master.tar.gz`,
@@ -41,10 +42,10 @@ export default async function importLibretroThumb(platform: string, repo: string
         .replaceAll(/\s+/g, ' ')
         .replaceAll('_', '&');
       const { mainName } = parseName(name);
-      let game = await Game.query().where({ name: mainName, platform }).first();
+      let game = await Game.query().where({ name: mainName, platformId: platform.id }).first();
       if (!game) {
         game = await Game.query()
-          .where({ name: mainName + ' (Disc 1)', platform })
+          .where({ name: mainName + ' (Disc 1)', platformId: platform.id })
           .first();
       }
       if (game?.mainId) {
@@ -75,11 +76,11 @@ export default async function importLibretroThumb(platform: string, repo: string
         });
       } else {
         notMatched++;
-        console.log(platform, thumbType, '\x1b[31m', 'NotMatched', '\x1b[0m', thumb);
+        console.log(platform.code, thumbType, '\x1b[31m', 'NotMatched', '\x1b[0m', thumb);
       }
     }
     console.log(
-      platform,
+      platform.code,
       thumbType,
       '\x1b[31m',
       'NotMatched',

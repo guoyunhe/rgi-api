@@ -25,6 +25,7 @@ Route.post('/logout', 'AuthController.logout').middleware('auth');
 Route.post('/register', 'AuthController.register');
 Route.get('/user', 'AuthController.user').middleware('auth');
 
+Route.resource('platforms', 'PlatformsController').apiOnly();
 Route.resource('series', 'SeriesController').apiOnly();
 Route.resource('titles', 'TitlesController').apiOnly();
 Route.resource('games', 'GamesController').apiOnly();
