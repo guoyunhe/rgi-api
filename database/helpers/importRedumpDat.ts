@@ -1,4 +1,5 @@
 import { download } from '@guoyunhe/downloader';
+import Platform from 'App/Models/Platform';
 import glob from 'fast-glob';
 import { XMLParser } from 'fast-xml-parser';
 import { mkdtemp, readFile } from 'fs/promises';
@@ -37,8 +38,8 @@ async function parseDat(filePath: string) {
   return games;
 }
 
-export default async function importRedumpDat(platform: string) {
-  const filePath = await downloadDat(platform);
+export default async function importRedumpDat(platform: Platform) {
+  const filePath = await downloadDat(platform.code);
   const data = await parseDat(filePath);
   await createGames(platform, data, 'redump');
 }
