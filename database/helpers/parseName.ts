@@ -3,6 +3,7 @@ const revRegex = /\(Rev \w+\)/;
 const altRegex = /\(Alt\)/;
 const langRegex = /\(([A-Z][a-z](?:[,+][A-Z][a-z])*)\)/;
 const allRegions = [
+  'Argentina',
   'Asia',
   'Australia',
   'Austria',
@@ -17,6 +18,7 @@ const allRegions = [
   'France',
   'Germany',
   'Greece',
+  'Hong Kong',
   'India',
   'Ireland',
   'Israel',
@@ -26,6 +28,7 @@ const allRegions = [
   'Latin America',
   'Netherlands',
   'New Zealand',
+  'Mexico',
   'Norway',
   'Poland',
   'Portugal',
