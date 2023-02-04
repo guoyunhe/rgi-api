@@ -12,66 +12,6 @@ export interface Platform {
 
 export const platforms: Platform[] = [
   {
-    code: 'psx',
-    name: 'PlayStation',
-    releaseDate: '1994-12-03',
-    importers: [
-      {
-        source: 'redump',
-        systemCode: 'psx',
-      },
-      {
-        source: 'libretro-thumbnail',
-        repo: 'Sony_-_PlayStation',
-      },
-    ],
-  },
-  {
-    code: 'ps2',
-    name: 'PlayStation 2',
-    releaseDate: '2000-03-04',
-    importers: [
-      {
-        source: 'redump',
-        systemCode: 'ps2',
-      },
-      {
-        source: 'libretro-thumbnail',
-        repo: 'Sony_-_PlayStation_2',
-      },
-    ],
-  },
-  {
-    code: 'ps3',
-    name: 'PlayStation 3',
-    releaseDate: '2006-11-11',
-    importers: [
-      {
-        source: 'redump',
-        systemCode: 'ps3',
-      },
-      {
-        source: 'libretro-thumbnail',
-        repo: 'Sony_-_PlayStation_3',
-      },
-    ],
-  },
-  {
-    code: 'psp',
-    name: 'PlayStation Portable',
-    releaseDate: '2004-12-12',
-    importers: [
-      {
-        source: 'redump',
-        systemCode: 'psp',
-      },
-      {
-        source: 'libretro-thumbnail',
-        repo: 'Sony_-_PlayStation_Portable',
-      },
-    ],
-  },
-  {
     code: 'sg1000',
     name: 'SG-1000 (SC-3000)',
     releaseDate: '1983-07-15',
