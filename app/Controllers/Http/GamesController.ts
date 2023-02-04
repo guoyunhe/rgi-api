@@ -64,9 +64,10 @@ export default class GamesController {
 
     if (!game) return response.notFound();
 
-    const { addImageId } = await request.validate({
+    const { addImageId, removeImageId } = await request.validate({
       schema: schema.create({
-        addImageId: schema.number([rules.exists({ table: 'images', column: 'id' })]),
+        addImageId: schema.number.optional([rules.exists({ table: 'images', column: 'id' })]),
+        removeImageId: schema.number.optional([rules.exists({ table: 'images', column: 'id' })]),
       }),
     });
 
@@ -83,6 +84,18 @@ export default class GamesController {
           data: { imageId: image.id },
         });
       }
+    }
+
+    if (removeImageId) {
+      await game.related('images').detach([removeImageId]);
+      await Activity.create({
+        type: 'user',
+        userId: auth.user?.id,
+        targetType: 'game',
+        targetId: game.id,
+        action: 'removeImage',
+        data: { imageId: removeImageId },
+      });
     }
 
     await game.load('images');

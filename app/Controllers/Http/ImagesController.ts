@@ -1,3 +1,4 @@
+import Drive from '@ioc:Adonis/Core/Drive';
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import { rules, schema } from '@ioc:Adonis/Core/Validator';
 import Activity from 'App/Models/Activity';
@@ -49,5 +50,24 @@ export default class ImagesController {
 
   public async show({}: HttpContextContract) {}
 
-  public async destroy({}: HttpContextContract) {}
+  public async destroy({ request, response, auth }: HttpContextContract) {
+    if (auth.user?.role !== 'admin') {
+      return response.unauthorized();
+    }
+    const image = await Image.find(request.param('id'));
+    if (!image) {
+      return response.notFound();
+    }
+    await Drive.delete(image?.path);
+    await image.delete();
+    await Activity.create({
+      type: 'user',
+      userId: auth.user?.id,
+      targetType: 'image',
+      targetId: image.id,
+      action: 'delete',
+      data: {},
+    });
+    return response.ok({});
+  }
 }
