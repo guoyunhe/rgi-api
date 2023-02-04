@@ -52,6 +52,7 @@ export default class GamesController {
 
     if (game) {
       await game.load('images');
+      await game.load('platform');
       return game;
     } else {
       return response.notFound();
