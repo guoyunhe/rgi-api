@@ -11,12 +11,12 @@ export default class extends BaseSeeder {
         code: 'gba',
       },
       {
-        name: 'Game Boy Advanced',
+        name: 'Game Boy Advance',
         alias: 'Game Boy Advance SP, Game Boy Micro',
         releaseDate: DateTime.fromISO('2001-03-21'),
       }
     );
     await importNoIntroDat(platform, 23);
-    await importLibretroThumb(platform, 'Nintendo_-_Game_Boy_Advanced');
+    await importLibretroThumb(platform, 'Nintendo_-_Game_Boy_Advance');
   }
 }
