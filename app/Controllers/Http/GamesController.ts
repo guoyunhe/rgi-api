@@ -86,6 +86,7 @@ export default class GamesController {
     }
 
     await game.load('images');
+    await game.load('platform');
     return game;
   }
 }
