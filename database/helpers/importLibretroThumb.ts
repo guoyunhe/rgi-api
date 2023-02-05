@@ -42,7 +42,10 @@ export default async function importLibretroThumb(platform: Platform, repo: stri
         .replaceAll(/\s+/g, ' ')
         .replaceAll('_', '&');
       const { mainName } = parseName(name);
-      let game = await Game.query().where({ name: mainName, platformId: platform.id }).first();
+      let game = await Game.query()
+        .where({ name: mainName, platformId: platform.id })
+        .orWhere({ name, platformId: platform.id })
+        .first();
       if (!game) {
         game = await Game.query()
           .where({ name: mainName + ' (Disc 1)', platformId: platform.id })
