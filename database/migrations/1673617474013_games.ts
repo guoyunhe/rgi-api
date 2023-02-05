@@ -12,7 +12,7 @@ export default class extends BaseSchema {
       table
         .integer('platform_id')
         .unsigned()
-        .notNullable()
+        .nullable()
         .references('platforms.id')
         .onDelete('SET NULL');
 

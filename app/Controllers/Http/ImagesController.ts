@@ -11,7 +11,7 @@ export default class ImagesController {
   }
 
   public async store({ request, response, auth }: HttpContextContract) {
-    const { imageFile, maxWidth, maxHeight, type } = await request.validate({
+    const { imageFile, category } = await request.validate({
       schema: schema.create({
         imageFile: schema.file(
           {
@@ -20,19 +20,38 @@ export default class ImagesController {
           },
           [rules.required()]
         ),
-        maxWidth: schema.number([rules.unsigned(), rules.range(50, 1280)]),
-        maxHeight: schema.number([rules.unsigned(), rules.range(50, 1280)]),
-        type: schema.enum(['avatar', 'boxart', 'snap', 'title'], [rules.required()]),
+        category: schema.enum(['avatar', 'boxart', 'snap', 'title'], [rules.required()]),
       }),
     });
 
     if (imageFile.tmpPath) {
-      const image = await Image.createFromLocalFile(imageFile.tmpPath, {
+      let image = await Image.createFromLocalFile(imageFile.tmpPath, {
         userId: auth.user?.id,
-        maxWidth,
-        maxHeight,
-        type: type as Image['type'],
+        category: category as Image['category'],
       });
+
+      if (image.fullId) {
+        await image.load('full');
+        image = image.full;
+      } else {
+        // PNG thumbnail for libretro
+        await Image.createFromLocalFile(imageFile.tmpPath, {
+          userId: auth.user?.id,
+          fullId: image.id,
+          category: category as Image['category'],
+          type: 'png',
+          maxWidth: category === 'boxart' ? 512 : 1280,
+        });
+        // WebP thumbnail for web app
+        await Image.createFromLocalFile(imageFile.tmpPath, {
+          userId: auth.user?.id,
+          fullId: image.id,
+          category: category as Image['category'],
+          type: 'webp',
+        });
+      }
+      await image.load('thumbs');
+
       await Activity.create({
         type: 'user',
         userId: auth.user!.id,
@@ -40,9 +59,10 @@ export default class ImagesController {
         targetId: image.id,
         action: 'upload',
       });
+
       // Remove tmp file to save disk space
       rm(imageFile.tmpPath);
-      return image;
+      return image.full || image;
     } else {
       return response.abort('Fail to upload image', 422);
     }

@@ -1,6 +1,6 @@
 import Drive from '@ioc:Adonis/Core/Drive';
 import Env from '@ioc:Adonis/Core/Env';
-import { BelongsTo, belongsTo, column, computed } from '@ioc:Adonis/Lucid/Orm';
+import { BelongsTo, belongsTo, column, computed, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm';
 import { createHash } from 'crypto';
 import { readFile } from 'fs/promises';
 import sizeOf from 'image-size';
@@ -9,17 +9,23 @@ import Model from './Model';
 import User from './User';
 
 /**
- * Boxart, title and snap images.
- *
- * All images are converted to PNG format, which is required by RetroArch.
- *
- * Sizes:
- * - Boxart: max width 512px
- * - Title and snap:
- *   - PSX, PS2: max 640x480px
- *   - PS3, PS4, NS: max 1280x720px
+ * Various images for game box arts, screenshots, user avatars, etc.
  */
 export default class Image extends Model {
+  /** The ID of full size image, if this is a thumbnail. */
+  @column()
+  public fullId: number | null;
+
+  /** The full size image, if this is a thumbnail. */
+  @belongsTo(() => Image)
+  public full: BelongsTo<typeof Image>;
+
+  /**
+   * Thumbnails
+   */
+  @hasMany(() => Image, { foreignKey: 'fullId' })
+  public thumbs: HasMany<typeof Image>;
+
   /** ID of user who uploaded the image */
   @column()
   public userId: number | null;
@@ -28,11 +34,15 @@ export default class Image extends Model {
   @belongsTo(() => User)
   public user: BelongsTo<typeof User>;
 
-  /** Usage type, like avatar, boxart, title, snap */
+  /** Category */
   @column()
-  public type: 'avatar' | 'boxart' | 'snap' | 'title';
+  public category: 'boxart' | 'title' | 'snap';
 
-  /** File storage path, images/<md5> */
+  /** File type */
+  @column()
+  public type: 'png' | 'jpg' | 'gif' | 'webp';
+
+  /** File storage path, images/<md5>.<type> */
   @column()
   public path: string;
 
@@ -57,25 +67,40 @@ export default class Image extends Model {
   public static async createFromLocalFile(
     filePath: string,
     options: {
-      type: Image['type'];
+      fullId?: number;
+      category: Image['category'];
+      type?: Image['type'];
       maxWidth?: number;
       maxHeight?: number;
       userId?: number;
     }
   ) {
     let buffer = await readFile(filePath);
-    let { width, height, type: fileType } = sizeOf(buffer);
+    let { width, height, type: originalType } = sizeOf(buffer);
 
-    if (!width || !height || !fileType) throw 'Invalid image file: ' + filePath;
+    if (!width || !height || !originalType) throw 'Invalid image file: ' + filePath;
 
-    // Resize and convert to PNG
-    const maxWidth = options?.maxWidth || 1280;
-    const maxHeight = options?.maxHeight || 960;
-    if (fileType !== 'png' || width > maxWidth || height > maxHeight) {
+    const { maxWidth = 1280, maxHeight = 960, category, type, fullId, userId } = options;
+
+    // Convert and resize if needed
+    if ((type && originalType !== type) || width > maxWidth || height > maxHeight) {
       let pipe = sharp(buffer);
-      if (fileType !== 'png') {
-        pipe = pipe.png();
-        console.log('convert to png:', filePath);
+      if (type && originalType !== type) {
+        switch (type) {
+          case 'gif':
+            pipe = pipe.gif();
+            break;
+          case 'jpg':
+            pipe = pipe.jpeg();
+            break;
+          case 'png':
+            pipe = pipe.png();
+            break;
+          case 'webp':
+            pipe = pipe.webp();
+            break;
+        }
+        console.log(`convert ${originalType} to ${type}: ${filePath}`);
       }
       if (width > maxWidth || height > maxHeight) {
         pipe = pipe.resize({ width: maxWidth, height: maxHeight, fit: sharp.fit.inside });
@@ -88,23 +113,27 @@ export default class Image extends Model {
     }
 
     const hash = createHash('md5').update(buffer).digest('hex');
-    const path = 'images/' + hash + '.png';
+    const path = `images/${hash}.${type}`;
     if (!(await Drive.exists(path))) {
       await Drive.put(path, buffer);
     }
     const size = buffer.byteLength;
-    let image = await Image.findBy('path', path);
-    if (!image) {
-      const type = options.type;
-      image = await Image.create({
-        type,
-        path,
-        userId: options?.userId,
-        width,
-        height,
-        size,
-      });
+    const image = await Image.firstOrCreate({ path });
+    image.fill({
+      category,
+      type: type as Image['type'],
+      userId,
+      width,
+      height,
+      size,
+    });
+
+    // Avoid circling references
+    if (fullId && image.id !== fullId) {
+      image.fullId = fullId;
     }
+
+    await image.save();
     return image;
   }
 }

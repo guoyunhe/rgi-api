@@ -52,10 +52,21 @@ export default async function importLibretroThumb(platform: Platform, repo: stri
         game = await Game.find(game.mainId);
       }
       if (game) {
+        // Save the original PNG image
         const image = await Image.createFromLocalFile(thumbTypeRoot + '/' + thumb, {
-          type: thumbType.toLowerCase() as any,
+          category: thumbType.toLowerCase() as any,
         });
-        await game.related('images').save(image);
+        await image.load('full');
+        await game.related('images').save(image.full || image);
+        // Save the converted WebP image, if PNG is not thumbnailed from other image
+        if (!image.full) {
+          await Image.createFromLocalFile(thumbTypeRoot + '/' + thumb, {
+            category: thumbType.toLowerCase() as any,
+            type: 'webp',
+            fullId: image.id,
+          });
+        }
+
         await Activity.create({
           type: 'system',
           targetType: 'image',

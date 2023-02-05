@@ -11,6 +11,7 @@ export default class extends BaseSchema {
       table.integer('user_id').unsigned().nullable().references('users.id').onDelete('SET NULL');
 
       table.string('path').notNullable().unique();
+      table.string('category').notNullable();
       table.string('type').notNullable();
       table.integer('size').notNullable();
       table.integer('width').notNullable();
