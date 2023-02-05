@@ -1,5 +1,6 @@
 import Drive from '@ioc:Adonis/Core/Drive';
 import Env from '@ioc:Adonis/Core/Env';
+import Logger from '@ioc:Adonis/Core/Logger';
 import { BelongsTo, belongsTo, column, computed, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm';
 import { createHash } from 'crypto';
 import { readFile } from 'fs/promises';
@@ -80,7 +81,14 @@ export default class Image extends Model {
 
     if (!width || !height || !originalType) throw 'Invalid image file: ' + filePath;
 
-    const { maxWidth = 1280, maxHeight = 960, category, type, fullId, userId } = options;
+    const {
+      maxWidth = 1280,
+      maxHeight = 1280,
+      category,
+      type = originalType,
+      fullId,
+      userId,
+    } = options;
 
     // Convert and resize if needed
     if ((type && originalType !== type) || width > maxWidth || height > maxHeight) {
@@ -100,14 +108,14 @@ export default class Image extends Model {
             pipe = pipe.webp();
             break;
         }
-        console.log(`convert ${originalType} to ${type}: ${filePath}`);
+        Logger.info(`convert ${originalType} to ${type}: ${filePath}`);
       }
       if (width > maxWidth || height > maxHeight) {
         pipe = pipe.resize({ width: maxWidth, height: maxHeight, fit: sharp.fit.inside });
         const newImageSize = sizeOf(buffer);
         width = newImageSize.width;
         height = newImageSize.height;
-        console.log('resize:', filePath);
+        Logger.info('resize %s', filePath);
       }
       buffer = await pipe.toBuffer();
     }
@@ -118,15 +126,19 @@ export default class Image extends Model {
       await Drive.put(path, buffer);
     }
     const size = buffer.byteLength;
-    const image = await Image.firstOrCreate({ path });
-    image.fill({
-      category,
-      type: type as Image['type'],
-      userId,
-      width,
-      height,
-      size,
-    });
+
+    const image = await Image.firstOrCreate(
+      { path },
+      {
+        path,
+        category,
+        type: type as Image['type'],
+        userId,
+        width,
+        height,
+        size,
+      }
+    );
 
     // Avoid circling references
     if (fullId && image.id !== fullId) {

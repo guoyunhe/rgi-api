@@ -28,19 +28,19 @@ export default class GamesController {
 
     if (noBoxartImage) {
       query = query.whereDoesntHave('images', (q) => {
-        q.where('type', 'boxart');
+        q.where('category', 'boxart');
       });
     }
 
     if (noSnapImage) {
       query = query.whereDoesntHave('images', (q) => {
-        q.where('type', 'snap');
+        q.where('category', 'snap');
       });
     }
 
     if (noTitleImage) {
       query = query.whereDoesntHave('images', (q) => {
-        q.where('type', 'title');
+        q.where('category', 'title');
       });
     }
 

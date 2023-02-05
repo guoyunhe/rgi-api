@@ -1,3 +1,5 @@
+import Logger from '@ioc:Adonis/Core/Logger';
+
 const discRegex = /\(Dis[ck] ([0-9]+)\)/;
 const revRegex = /\(Rev \w+\)/;
 const altRegex = /\(Alt\)/;
@@ -68,7 +70,7 @@ export default function parseName(name: string) {
   const regionMatch = name.match(regionRegex);
 
   if (!regionMatch) {
-    console.log('No region found in', name);
+    Logger.warn('No region found in %s', name);
   }
 
   const region = remapRegion(regionMatch?.[1]);
