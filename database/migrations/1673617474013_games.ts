@@ -7,28 +7,14 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id');
 
-      table
-        .integer('title_id')
-        .unsigned()
-        .nullable()
-        .references('id')
-        .inTable('titles')
-        .onDelete('SET NULL');
-
-      table
-        .integer('main_id')
-        .unsigned()
-        .nullable()
-        .references('id')
-        .inTable('games')
-        .onDelete('SET NULL');
-
+      table.integer('title_id').unsigned().nullable().references('titles.id').onDelete('SET NULL');
+      table.integer('main_id').unsigned().nullable().references('games.id').onDelete('SET NULL');
       table
         .integer('platform_id')
         .unsigned()
         .notNullable()
         .references('platforms.id')
-        .onDelete('CASCADE');
+        .onDelete('SET NULL');
 
       table.string('name');
       table.string('display_name');

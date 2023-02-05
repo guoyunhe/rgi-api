@@ -7,13 +7,7 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id');
 
-      table
-        .integer('series_id')
-        .unsigned()
-        .nullable()
-        .references('id')
-        .inTable('series')
-        .onDelete('SET NULL');
+      table.integer('series_id').unsigned().nullable().references('series.id').onDelete('SET NULL');
 
       table.string('name').notNullable().unique();
 
