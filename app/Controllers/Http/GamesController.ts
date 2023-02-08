@@ -1,8 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import { rules, schema } from '@ioc:Adonis/Core/Validator';
-import Activity from 'App/Models/Activity';
 import Game from 'App/Models/Game';
-import Image from 'App/Models/Image';
 
 export default class GamesController {
   public async index({ request }: HttpContextContract) {
@@ -20,7 +18,12 @@ export default class GamesController {
 
     let query = Game.query();
     query = query.whereNull('mainId');
-    query = query.preload('images').preload('subs');
+    query = query
+      .preload('images', (builder) => {
+        builder.pivotColumns(['category']);
+        builder.preload('thumbs');
+      })
+      .preload('subs');
 
     if (platform) {
       query = query.where('platformId', platform);
@@ -48,57 +51,29 @@ export default class GamesController {
   }
 
   public async show({ request, response }: HttpContextContract) {
-    const game = await Game.find(request.param('id'));
+    const game = await Game.query()
+      .preload('images', (builder) => {
+        builder.preload('thumbs');
+      })
+      .preload('platform')
+      .where('id', request.param('id'))
+      .first();
 
     if (game) {
-      await game.load('images');
-      await game.load('platform');
       return game;
     } else {
       return response.notFound();
     }
   }
 
-  public async update({ request, response, auth }: HttpContextContract) {
+  public async update({ request, response }: HttpContextContract) {
     const game = await Game.find(request.param('id'));
 
     if (!game) return response.notFound();
 
-    const { addImageId, removeImageId } = await request.validate({
-      schema: schema.create({
-        addImageId: schema.number.optional([rules.exists({ table: 'images', column: 'id' })]),
-        removeImageId: schema.number.optional([rules.exists({ table: 'images', column: 'id' })]),
-      }),
+    await game.load('images', (builder) => {
+      builder.preload('thumbs');
     });
-
-    if (addImageId) {
-      const image = await Image.find(addImageId);
-      if (image) {
-        await game.related('images').save(image);
-        await Activity.create({
-          type: 'user',
-          userId: auth.user?.id,
-          targetType: 'game',
-          targetId: game.id,
-          action: 'addImage',
-          data: { imageId: image.id },
-        });
-      }
-    }
-
-    if (removeImageId) {
-      await game.related('images').detach([removeImageId]);
-      await Activity.create({
-        type: 'user',
-        userId: auth.user?.id,
-        targetType: 'game',
-        targetId: game.id,
-        action: 'removeImage',
-        data: { imageId: removeImageId },
-      });
-    }
-
-    await game.load('images');
     await game.load('platform');
     return game;
   }

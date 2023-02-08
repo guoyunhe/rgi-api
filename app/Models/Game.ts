@@ -77,7 +77,9 @@ export default class Game extends Model {
   public version: string | null;
 
   /** Boxart, snap screen and title screen images */
-  @manyToMany(() => Image)
+  @manyToMany(() => Image, {
+    pivotColumns: ['category'],
+  })
   public images: ManyToMany<typeof Image>;
 
   /** External links */

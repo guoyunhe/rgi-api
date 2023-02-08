@@ -35,10 +35,6 @@ export default class Image extends Model {
   @belongsTo(() => User)
   public user: BelongsTo<typeof User>;
 
-  /** Category */
-  @column()
-  public category: 'boxart' | 'title' | 'snap';
-
   /** File type */
   @column()
   public type: 'png' | 'jpg' | 'gif' | 'webp';
@@ -65,11 +61,16 @@ export default class Image extends Model {
     return `${Env.get('APP_URL')}/storage/${this.path}`;
   }
 
+  /** Image category, from pivot table */
+  @computed()
+  public get category() {
+    return this.$extras.pivot_category;
+  }
+
   public static async createFromLocalFile(
     filePath: string,
     options: {
       fullId?: number;
-      category: Image['category'];
       type?: Image['type'];
       maxWidth?: number;
       maxHeight?: number;
@@ -81,14 +82,7 @@ export default class Image extends Model {
 
     if (!width || !height || !originalType) throw 'Invalid image file: ' + filePath;
 
-    const {
-      maxWidth = 1280,
-      maxHeight = 1280,
-      category,
-      type = originalType,
-      fullId,
-      userId,
-    } = options;
+    const { maxWidth = 1280, maxHeight = 1280, type = originalType, fullId, userId } = options;
 
     // Convert and resize if needed
     if ((type && originalType !== type) || width > maxWidth || height > maxHeight) {
@@ -131,7 +125,6 @@ export default class Image extends Model {
       { path },
       {
         path,
-        category,
         type: type as Image['type'],
         userId,
         width,

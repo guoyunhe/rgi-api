@@ -43,6 +43,7 @@ export default async function importLibretroThumb(platform: Platform, repo: stri
         .replaceAll('_', '&');
       const { mainName } = parseName(name);
       let game = await Game.query()
+        .preload('images')
         .where({ name: mainName, platformId: platform.id })
         .orWhere({ name, platformId: platform.id })
         .first();
@@ -56,21 +57,22 @@ export default async function importLibretroThumb(platform: Platform, repo: stri
       }
       if (game) {
         // Save the original PNG image
-        let image = await Image.createFromLocalFile(thumbTypeRoot + '/' + thumb, {
-          category: thumbType.toLowerCase() as any,
-        });
+        let image = await Image.createFromLocalFile(thumbTypeRoot + '/' + thumb, {});
         if (image.fullId) {
           image = (await Image.find(image.fullId)) || image;
         } else {
           // Save the converted WebP image, if PNG is not thumbnailed from other image
           await Image.createFromLocalFile(thumbTypeRoot + '/' + thumb, {
-            category: thumbType.toLowerCase() as any,
             type: 'webp',
             fullId: image.id,
           });
         }
 
-        await game.related('images').save(image);
+        await game.related('images').attach({
+          [image.id]: {
+            category: thumbType.toLowerCase() as any,
+          },
+        });
 
         await Activity.create({
           type: 'system',

@@ -29,12 +29,13 @@ Route.resource('platforms', 'PlatformsController').apiOnly();
 Route.resource('series', 'SeriesController').apiOnly();
 Route.resource('titles', 'TitlesController').apiOnly();
 Route.resource('games', 'GamesController').apiOnly();
-Route.resource('roms', 'RomsController').apiOnly();
-Route.resource('images', 'ImagesController')
-  .only(['index', 'store', 'show', 'destroy'])
+Route.resource('games.images', 'ImagesController')
+  .apiOnly()
   .middleware({
     store: ['auth'],
+    update: ['auth'],
     destroy: ['auth'],
   });
+Route.resource('roms', 'RomsController').apiOnly();
 Route.resource('activities', 'ActivitiesController').apiOnly();
 Route.resource('users', 'UsersController').apiOnly();
