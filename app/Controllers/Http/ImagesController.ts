@@ -55,24 +55,31 @@ export default class ImagesController {
           type: 'webp',
         });
       }
+
       await image.load('thumbs');
 
-      await Activity.create({
-        type: 'user',
-        userId: auth.user!.id,
-        targetType: 'image',
-        targetId: image.id,
-        action: 'upload',
-      });
+      if (image.$isLocal) {
+        await Activity.create({
+          type: 'user',
+          userId: auth.user!.id,
+          targetType: 'image',
+          targetId: image.id,
+          action: 'upload',
+        });
+      }
 
       // Remove tmp file to save disk space
       rm(imageFile.tmpPath);
 
-      await game.related('images').attach({
-        [image.id]: {
-          category,
+      await game.related('images').sync(
+        {
+          [image.id]: {
+            category,
+          },
         },
-      });
+        false
+      );
+
       await Activity.create({
         type: 'user',
         userId: auth.user?.id,
@@ -81,6 +88,8 @@ export default class ImagesController {
         action: 'addImage',
         data: { imageId: image.id },
       });
+
+      return image;
     } else {
       return response.abort('Fail to upload image', 422);
     }

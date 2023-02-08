@@ -43,7 +43,6 @@ export default async function importLibretroThumb(platform: Platform, repo: stri
         .replaceAll('_', '&');
       const { mainName } = parseName(name);
       let game = await Game.query()
-        .preload('images')
         .where({ name: mainName, platformId: platform.id })
         .orWhere({ name, platformId: platform.id })
         .first();
@@ -58,6 +57,7 @@ export default async function importLibretroThumb(platform: Platform, repo: stri
       if (game) {
         // Save the original PNG image
         let image = await Image.createFromLocalFile(thumbTypeRoot + '/' + thumb, {});
+
         if (image.fullId) {
           image = (await Image.find(image.fullId)) || image;
         } else {
@@ -68,30 +68,35 @@ export default async function importLibretroThumb(platform: Platform, repo: stri
           });
         }
 
-        await game.related('images').attach({
-          [image.id]: {
-            category: thumbType.toLowerCase() as any,
+        await game.related('images').sync(
+          {
+            [image.id]: {
+              category: thumbType.toLowerCase() as any,
+            },
           },
-        });
+          false
+        );
 
-        await Activity.create({
-          type: 'system',
-          targetType: 'image',
-          targetId: image.id,
-          action: 'import',
-          data: {
-            source: 'libretro-thumbnails',
-          },
-        });
-        await Activity.create({
-          type: 'system',
-          targetType: 'game',
-          targetId: game.id,
-          action: 'addImage',
-          data: {
-            source: 'libretro-thumbnails',
-          },
-        });
+        if (image.$isLocal) {
+          await Activity.create({
+            type: 'system',
+            targetType: 'image',
+            targetId: image.id,
+            action: 'import',
+            data: {
+              source: 'libretro-thumbnails',
+            },
+          });
+          await Activity.create({
+            type: 'system',
+            targetType: 'game',
+            targetId: game.id,
+            action: 'addImage',
+            data: {
+              source: 'libretro-thumbnails',
+            },
+          });
+        }
       } else {
         notMatched++;
         console.log(platform.code, thumbType, '\x1b[31m', 'NotMatched', '\x1b[0m', thumb);
