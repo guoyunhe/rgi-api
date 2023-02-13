@@ -75,6 +75,7 @@ export default class Image extends Model {
       maxWidth?: number;
       maxHeight?: number;
       userId?: number;
+      crop?: { left: number; top: number; width: number; height: number };
     }
   ) {
     let buffer = await readFile(filePath);
@@ -82,11 +83,21 @@ export default class Image extends Model {
 
     if (!width || !height || !originalType) throw 'Invalid image file: ' + filePath;
 
-    const { maxWidth = 1280, maxHeight = 1280, type = originalType, fullId, userId } = options;
+    const {
+      maxWidth = 1280,
+      maxHeight = 1280,
+      type = originalType,
+      fullId,
+      userId,
+      crop,
+    } = options;
 
     // Convert and resize if needed
-    if ((type && originalType !== type) || width > maxWidth || height > maxHeight) {
+    if ((type && originalType !== type) || width > maxWidth || height > maxHeight || crop) {
       let pipe = sharp(buffer);
+      if (crop) {
+        pipe = pipe.extract(crop);
+      }
       if (type && originalType !== type) {
         switch (type) {
           case 'gif':

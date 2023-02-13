@@ -24,6 +24,8 @@ Route.post('/login', 'AuthController.login');
 Route.post('/logout', 'AuthController.logout').middleware('auth');
 Route.post('/register', 'AuthController.register');
 Route.get('/user', 'AuthController.user').middleware('auth');
+Route.post('/user/avatar', 'AuthController.storeAvatar').middleware('auth');
+Route.delete('/user/avatar', 'AuthController.destroyAvatar').middleware('auth');
 
 Route.resource('platforms', 'PlatformsController').apiOnly();
 Route.resource('series', 'SeriesController').apiOnly();

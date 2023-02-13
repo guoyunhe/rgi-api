@@ -1,5 +1,6 @@
 import Hash from '@ioc:Adonis/Core/Hash';
-import { beforeSave, column } from '@ioc:Adonis/Lucid/Orm';
+import { beforeSave, belongsTo, BelongsTo, column } from '@ioc:Adonis/Lucid/Orm';
+import Image from './Image';
 import Model from './Model';
 
 export default class User extends Model {
@@ -17,6 +18,12 @@ export default class User extends Model {
 
   @column()
   public role: string | null;
+
+  @column()
+  public avatarId: number | null;
+
+  @belongsTo(() => Image)
+  public avatar: BelongsTo<typeof Image>;
 
   @beforeSave()
   public static async hashPassword(user: User) {
