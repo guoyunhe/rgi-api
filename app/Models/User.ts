@@ -22,7 +22,7 @@ export default class User extends Model {
   @column()
   public avatarId: number | null;
 
-  @belongsTo(() => Image)
+  @belongsTo(() => Image, { localKey: 'avatarId' })
   public avatar: BelongsTo<typeof Image>;
 
   @beforeSave()
